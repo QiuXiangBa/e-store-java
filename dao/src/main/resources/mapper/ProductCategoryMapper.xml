@@ -23,4 +23,17 @@
     id, parent_id, `name`, pic_url, big_pic_url, sort, `status`, creator, create_time, 
     updater, update_time, deleted, tenant_id
   </sql>
+
+  <update id="updateSortBatch">
+    update product_category
+    set sort = case id
+    <foreach collection="list" item="item">
+      when #{item.id} then #{item.sort}
+    </foreach>
+    end
+    where id in
+    <foreach collection="list" item="item" open="(" separator="," close=")">
+      #{item.id}
+    </foreach>
+  </update>
 </mapper>

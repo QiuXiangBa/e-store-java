@@ -111,6 +111,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     public void updateCategorySortBatch(List<ProductCategoryDTO> items) {
         validateCategorySortBatch(items);
         List<Long> ids = items.stream().map(ProductCategoryDTO::getId).toList();
+        // 先全量校验分类是否存在，避免出现部分成功、部分失败。 / Pre-check all category IDs to avoid partial updates.
         List<ProductCategoryDTO> existingCategories = bizProductCategoryMapper.selectByIds(ids);
         if (existingCategories.size() != ids.size()) {
             Set<Long> existingIdSet = existingCategories.stream().map(ProductCategoryDTO::getId).collect(Collectors.toSet());
@@ -147,6 +148,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         if (items.size() > ProductConstants.CATEGORY_SORT_BATCH_MAX_SIZE) {
             throw new BizException(ProductConstants.CATEGORY_SORT_BATCH_SIZE_EXCEED);
         }
+        // 使用 Set 在单次遍历中做 O(1) 重复 ID 检测。 / Use a Set for O(1) duplicate-ID detection in one pass.
         Set<Long> idSet = new HashSet<>();
         for (ProductCategoryDTO item : items) {
             if (item.getId() == null || item.getSort() == null || item.getSort() < ProductConstants.DEFAULT_ZERO) {
