@@ -15,7 +15,10 @@ import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductCategoryServiceImpl implements ProductCategoryService {
@@ -103,6 +106,21 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         return level;
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateCategorySortBatch(List<ProductCategoryDTO> items) {
+        validateCategorySortBatch(items);
+        List<Long> ids = items.stream().map(ProductCategoryDTO::getId).toList();
+        List<ProductCategoryDTO> existingCategories = bizProductCategoryMapper.selectByIds(ids);
+        if (existingCategories.size() != ids.size()) {
+            Set<Long> existingIdSet = existingCategories.stream().map(ProductCategoryDTO::getId).collect(Collectors.toSet());
+            Long missingId = ids.stream().filter(id -> !existingIdSet.contains(id)).findFirst().orElse(null);
+            throw new BizException(ProductConstants.CATEGORY_NOT_EXISTS,
+                    missingId == null ? ProductConstants.CATEGORY_NOT_EXISTS.msg() : "分类不存在: " + missingId);
+        }
+        bizProductCategoryMapper.updateSortBatch(items);
+    }
+
     private void validateParentProductCategory(Long id) {
         if (id == null || ROOT_PARENT_ID.equals(id)) {
             return;
@@ -119,6 +137,24 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     private void validateProductCategoryExists(Long id) {
         if (bizProductCategoryMapper.selectById(id) == null) {
             throw new BizException(ProductConstants.CATEGORY_NOT_EXISTS);
+        }
+    }
+
+    private void validateCategorySortBatch(List<ProductCategoryDTO> items) {
+        if (items == null || items.isEmpty()) {
+            throw new BizException(ProductConstants.CATEGORY_SORT_BATCH_EMPTY);
+        }
+        if (items.size() > ProductConstants.CATEGORY_SORT_BATCH_MAX_SIZE) {
+            throw new BizException(ProductConstants.CATEGORY_SORT_BATCH_SIZE_EXCEED);
+        }
+        Set<Long> idSet = new HashSet<>();
+        for (ProductCategoryDTO item : items) {
+            if (item.getId() == null || item.getSort() == null || item.getSort() < ProductConstants.DEFAULT_ZERO) {
+                throw new BizException(ProductConstants.CATEGORY_SORT_INVALID);
+            }
+            if (!idSet.add(item.getId())) {
+                throw new BizException(ProductConstants.CATEGORY_SORT_ID_DUPLICATE);
+            }
         }
     }
 }
