@@ -15,6 +15,7 @@
 7. **模型转换规范**：VO / DTO / PO 之间的转换必须通过 Convert（MapStruct）完成，禁止手写字段拷贝。
 8. **禁止魔法值**：代码中不得出现未命名的数字、字符串等字面量；常量统一收敛到 `dao/constant/*Constants`（错误码枚举项 + 业务静态常量）。
 9. **批处理规范**：禁止在循环内逐条查询或逐条写入；必须使用「批量查询 + 批量写入」，可按批拆分后每批内批量操作。
+10. **注释规范**：新增代码注释必须使用「中文 + 英文」双语注释；新增枚举必须包含 JavaDoc（类注释 + 枚举项注释）。
 
 ## 分层架构
 
@@ -244,6 +245,23 @@ for (List<String> words : listList) {
 | 多条查询 | 循环内 getByXxx、selectById | 按集合批量查询 listByXxx、listExistingWords |
 | 多条写入 | 循环内 insert、addXxx | 批量写入 batchAddWords、saveBatch |
 | 数据量大 | 单次全量查/写 | 按批拆分，每批内仍批量操作 |
+
+---
+
+## 注释规范
+
+### 原则
+
+1. 新增代码注释必须使用中文 + 英文双语表达。
+2. 双语注释建议单行格式：`中文说明。 / English explanation.`
+3. 注释应解释“为什么这样做”，避免描述显而易见的代码动作。
+4. 新增枚举必须包含 JavaDoc（类注释 + 每个枚举项注释）。
+
+### 示例
+
+```java
+// 先全量校验分类是否存在，避免部分成功。 / Pre-check all category IDs to avoid partial updates.
+```
 
 ### 填充数据（Fill）模式（批处理扩展）
 
