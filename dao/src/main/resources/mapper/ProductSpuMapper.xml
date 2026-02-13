@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.followba.store.dao.mapper.ProductSpuMapper">
+  <resultMap id="BaseResultMap" type="com.followba.store.dao.po.ProductSpu">
+    <!--@mbg.generated-->
+    <!--@Table product_spu-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="keyword" jdbcType="VARCHAR" property="keyword" />
+    <result column="introduction" jdbcType="VARCHAR" property="introduction" />
+    <result column="description" jdbcType="LONGVARCHAR" property="description" />
+    <result column="bar_code" jdbcType="VARCHAR" property="barCode" />
+    <result column="category_id" jdbcType="BIGINT" property="categoryId" />
+    <result column="brand_id" jdbcType="INTEGER" property="brandId" />
+    <result column="pic_url" jdbcType="VARCHAR" property="picUrl" />
+    <result column="slider_pic_urls" jdbcType="VARCHAR" property="sliderPicUrls" />
+    <result column="video_url" jdbcType="VARCHAR" property="videoUrl" />
+    <result column="sort" jdbcType="INTEGER" property="sort" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="spec_type" jdbcType="INTEGER" property="specType" />
+    <result column="price" jdbcType="INTEGER" property="price" />
+    <result column="market_price" jdbcType="INTEGER" property="marketPrice" />
+    <result column="cost_price" jdbcType="INTEGER" property="costPrice" />
+    <result column="stock" jdbcType="INTEGER" property="stock" />
+    <result column="delivery_template_id" jdbcType="BIGINT" property="deliveryTemplateId" />
+    <result column="recommend_hot" jdbcType="BOOLEAN" property="recommendHot" />
+    <result column="recommend_benefit" jdbcType="BOOLEAN" property="recommendBenefit" />
+    <result column="recommend_best" jdbcType="BOOLEAN" property="recommendBest" />
+    <result column="recommend_new" jdbcType="BOOLEAN" property="recommendNew" />
+    <result column="recommend_good" jdbcType="BOOLEAN" property="recommendGood" />
+    <result column="give_integral" jdbcType="INTEGER" property="giveIntegral" />
+    <result column="give_coupon_template_ids" jdbcType="VARCHAR" property="giveCouponTemplateIds" />
+    <result column="sub_commission_type" jdbcType="INTEGER" property="subCommissionType" />
+    <result column="activity_orders" jdbcType="VARCHAR" property="activityOrders" />
+    <result column="sales_count" jdbcType="INTEGER" property="salesCount" />
+    <result column="virtual_sales_count" jdbcType="INTEGER" property="virtualSalesCount" />
+    <result column="browse_count" jdbcType="INTEGER" property="browseCount" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="updater" jdbcType="VARCHAR" property="updater" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="deleted" jdbcType="BOOLEAN" property="deleted" />
+    <result column="tenant_id" jdbcType="BIGINT" property="tenantId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, `name`, keyword, introduction, description, bar_code, category_id, brand_id, 
+    pic_url, slider_pic_urls, video_url, sort, `status`, spec_type, price, market_price, 
+    cost_price, stock, delivery_template_id, recommend_hot, recommend_benefit, recommend_best, 
+    recommend_new, recommend_good, give_integral, give_coupon_template_ids, sub_commission_type, 
+    activity_orders, sales_count, virtual_sales_count, browse_count, creator, create_time, 
+    updater, update_time, deleted, tenant_id
+  </sql>
+</mapper>

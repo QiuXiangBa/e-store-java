@@ -1,0 +1,25 @@
+spring:
+  jackson:
+    time-zone: GMT+8
+    serialization:
+      write-dates-as-timestamps: true
+  main:
+    allow-bean-definition-overriding: true #当出现相同名字的类进行注册时，准许覆盖注册
+    allow-circular-references: true # 循环依赖
+  application:
+    name: word-ease
+  profiles:
+    active: dev #默认为开发环境
+
+i-tool:
+  auth:
+    head-token-name: Authorization
+    exclude-path: /,/health/status,/js/**,/css/**,/images/**,/open/**,/pay/v3/notify/refund,/pay/v3/notify/order,/pay/v3/notify/transferBills,/auth/login,/auth/logout
+    exclude-path-auth: /,/health/status,/js/**,/css/**,/images/**,/open/**,/pay/v3/notify/refund,/pay/v3/notify/order,/pay/v3/notify/transferBills,/auth/login,/auth/logout
+
+log:
+  dir: logs
+
+logging:
+  file:
+    name: ${log.dir}/${spring.application.name}.log # 日志文件名，全路径

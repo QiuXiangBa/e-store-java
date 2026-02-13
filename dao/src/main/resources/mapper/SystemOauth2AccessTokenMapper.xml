@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.followba.store.dao.mapper.SystemOauth2AccessTokenMapper">
+  <resultMap id="BaseResultMap" type="com.followba.store.dao.po.SystemOauth2AccessToken">
+    <!--@mbg.generated-->
+    <!--@Table system_oauth2_access_token-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="user_type" jdbcType="SMALLINT" property="userType" />
+    <result column="user_info" jdbcType="VARCHAR" property="userInfo" />
+    <result column="access_token" jdbcType="VARCHAR" property="accessToken" />
+    <result column="refresh_token" jdbcType="VARCHAR" property="refreshToken" />
+    <result column="client_id" jdbcType="VARCHAR" property="clientId" />
+    <result column="scopes" jdbcType="VARCHAR" property="scopes" />
+    <result column="expires_time" jdbcType="TIMESTAMP" property="expiresTime" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="updater" jdbcType="VARCHAR" property="updater" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="deleted" jdbcType="SMALLINT" property="deleted" />
+    <result column="tenant_id" jdbcType="BIGINT" property="tenantId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, user_id, user_type, user_info, access_token, refresh_token, client_id, scopes, 
+    expires_time, creator, create_time, updater, update_time, deleted, tenant_id
+  </sql>
+</mapper>

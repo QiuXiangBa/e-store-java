@@ -1,0 +1,20 @@
+## sys dic
+### init
+POST {{host}}/
+Content-Type: application/json
+Authorization: 1
+
+{
+  "word": "excuse"
+}
+
+
+###
+POST {{host}}/system/auth/create-user
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "123456",
+  "nickname": "管理员"
+}

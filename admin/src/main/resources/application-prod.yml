@@ -1,0 +1,14 @@
+server:
+  port: 8892
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://rm-bp19b397kq66860es.mysql.rds.aliyuncs.com:3306/word-ease?useSSL=false&allowPublicKeyRetrieval=true&useTimezone=true&serverTimezone=Asia/Shanghai
+    username: word_ease
+    password: Wordease@1029_
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      password: 'rbp156asz12zcq5teo0@yy24'
+      database: 7

@@ -1,0 +1,9 @@
+## sys dic
+### init
+POST {{host}}/
+Content-Type: application/json
+Authorization: 1
+
+{
+  "word": "excuse"
+}

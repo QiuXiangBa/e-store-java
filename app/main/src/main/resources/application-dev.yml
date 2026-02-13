@@ -1,0 +1,17 @@
+server:
+  port: 8092
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/e-store?useSSL=false&allowPublicKeyRetrieval=true&useTimezone=true&serverTimezone=Asia/Shanghai
+    username: root
+    password: 12345678
+  data:
+    redis:
+      host: 47.99.85.60
+      port: 6379
+      password: 'rbp156asz12zcq5teo0@yy24'
+      database: 7
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

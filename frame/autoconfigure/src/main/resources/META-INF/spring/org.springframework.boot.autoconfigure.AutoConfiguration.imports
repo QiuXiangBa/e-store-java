@@ -1,0 +1,8 @@
+com.followba.store.web.config.WebConfig
+com.followba.store.web.WebService
+com.followba.store.web.handler.FrameGlobalExceptionHandler
+com.followba.store.web.template.WebLoginTemplate
+com.followba.store.mybatis.config.MyBatisPlusConfig
+com.followba.store.objectstorage.config.ObjectStorageConfiguration
+com.followba.store.objectstorage.core.ObjectStorageClientFactory
+com.followba.store.objectstorage.core.ObjectStorageService

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.followba.store.dao.mapper.ProductCommentMapper">
+  <resultMap id="BaseResultMap" type="com.followba.store.dao.po.ProductComment">
+    <!--@mbg.generated-->
+    <!--@Table product_comment-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="user_nickname" jdbcType="VARCHAR" property="userNickname" />
+    <result column="user_avatar" jdbcType="VARCHAR" property="userAvatar" />
+    <result column="anonymous" jdbcType="BIT" property="anonymous" />
+    <result column="order_id" jdbcType="BIGINT" property="orderId" />
+    <result column="order_item_id" jdbcType="BIGINT" property="orderItemId" />
+    <result column="spu_id" jdbcType="BIGINT" property="spuId" />
+    <result column="spu_name" jdbcType="VARCHAR" property="spuName" />
+    <result column="sku_id" jdbcType="BIGINT" property="skuId" />
+    <result column="visible" jdbcType="BOOLEAN" property="visible" />
+    <result column="scores" jdbcType="INTEGER" property="scores" />
+    <result column="description_scores" jdbcType="INTEGER" property="descriptionScores" />
+    <result column="benefit_scores" jdbcType="INTEGER" property="benefitScores" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="pic_urls" jdbcType="VARCHAR" property="picUrls" />
+    <result column="reply_status" jdbcType="INTEGER" property="replyStatus" />
+    <result column="reply_user_id" jdbcType="BIGINT" property="replyUserId" />
+    <result column="reply_content" jdbcType="VARCHAR" property="replyContent" />
+    <result column="reply_time" jdbcType="TIMESTAMP" property="replyTime" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="updater" jdbcType="VARCHAR" property="updater" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="deleted" jdbcType="BOOLEAN" property="deleted" />
+    <result column="tenant_id" jdbcType="BIGINT" property="tenantId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, user_id, user_nickname, user_avatar, anonymous, order_id, order_item_id, spu_id, 
+    spu_name, sku_id, visible, scores, description_scores, benefit_scores, content, pic_urls, 
+    reply_status, reply_user_id, reply_content, reply_time, creator, create_time, updater, 
+    update_time, deleted, tenant_id
+  </sql>
+</mapper>

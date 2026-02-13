@@ -1,0 +1,37 @@
+spring:
+  jackson:
+    time-zone: GMT+8
+    serialization:
+      write-dates-as-timestamps: true
+  main:
+    allow-bean-definition-overriding: true #当出现相同名字的类进行注册时，准许覆盖注册
+    allow-circular-references: true # 循环依赖
+  application:
+    name: word-ease
+  profiles:
+    active: dev #默认为开发环境
+
+i-tool:
+  auth:
+    head-token-name: Authorization
+    exclude-path: /,/health/status,/js/**,/css/**,/images/**,/open/**,/pay/v3/notify/refund,/pay/v3/notify/order,/pay/v3/notify/transferBills,/auth/login,/auth/logout,/system/auth/login,/system/auth/create-user
+    exclude-path-auth: /,/health/status,/js/**,/css/**,/images/**,/open/**,/pay/v3/notify/refund,/pay/v3/notify/order,/pay/v3/notify/transferBills,/auth/login,/auth/logout,/system/auth/login,/system/auth/create-user
+  oss:
+    enabled: true
+    provider: aws-s3
+    aws-s3:
+      endpoint: ${AWS_S3_ENDPOINT:https://s3.us-east-1.amazonaws.com}
+      region: ${AWS_S3_REGION:us-east-1}
+      access-key: ${AWS_S3_ACCESS_KEY:}
+      secret-key: ${AWS_S3_SECRET_KEY:}
+      bucket: ${AWS_S3_BUCKET:}
+      public-url-prefix: ${AWS_S3_PUBLIC_URL_PREFIX:}
+      path-style-access-enabled: ${AWS_S3_PATH_STYLE_ACCESS_ENABLED:false}
+      presign-ttl: ${AWS_S3_PRESIGN_TTL:30m}
+
+log:
+  dir: logs
+
+logging:
+  file:
+    name: ${log.dir}/${spring.application.name}.log # 日志文件名，全路径

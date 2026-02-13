@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.followba.store.dao.mapper.ProductSkuMapper">
+  <resultMap id="BaseResultMap" type="com.followba.store.dao.po.ProductSku">
+    <!--@mbg.generated-->
+    <!--@Table product_sku-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="spu_id" jdbcType="BIGINT" property="spuId" />
+    <result column="properties" jdbcType="VARCHAR" property="properties" />
+    <result column="price" jdbcType="INTEGER" property="price" />
+    <result column="market_price" jdbcType="INTEGER" property="marketPrice" />
+    <result column="cost_price" jdbcType="INTEGER" property="costPrice" />
+    <result column="bar_code" jdbcType="VARCHAR" property="barCode" />
+    <result column="pic_url" jdbcType="VARCHAR" property="picUrl" />
+    <result column="stock" jdbcType="INTEGER" property="stock" />
+    <result column="weight" jdbcType="DOUBLE" property="weight" />
+    <result column="volume" jdbcType="DOUBLE" property="volume" />
+    <result column="sub_commission_first_price" jdbcType="INTEGER" property="subCommissionFirstPrice" />
+    <result column="sub_commission_second_price" jdbcType="INTEGER" property="subCommissionSecondPrice" />
+    <result column="sales_count" jdbcType="INTEGER" property="salesCount" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="updater" jdbcType="VARCHAR" property="updater" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="deleted" jdbcType="TINYINT" property="deleted" />
+    <result column="tenant_id" jdbcType="BIGINT" property="tenantId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, spu_id, properties, price, market_price, cost_price, bar_code, pic_url, stock, 
+    weight, volume, sub_commission_first_price, sub_commission_second_price, sales_count, 
+    creator, create_time, updater, update_time, deleted, tenant_id
+  </sql>
+
+  <insert id="batchInsert">
+    insert into product_sku
+    (spu_id, properties, price, market_price, cost_price, bar_code, pic_url, stock,
+     weight, volume, sub_commission_first_price, sub_commission_second_price, sales_count)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.spuId}, #{item.properties}, #{item.price}, #{item.marketPrice}, #{item.costPrice}, #{item.barCode}, #{item.picUrl}, #{item.stock},
+       #{item.weight}, #{item.volume}, #{item.subCommissionFirstPrice}, #{item.subCommissionSecondPrice}, #{item.salesCount})
+    </foreach>
+  </insert>
+</mapper>
