@@ -15,6 +15,10 @@ public enum ProductConstants implements ErrorCode {
     CATEGORY_HAVE_BIND_SPU(61105, "分类下存在商品，不能删除"),
     CATEGORY_DISABLED(61106, "分类已禁用"),
     CATEGORY_LEVEL_ERROR(61107, "商品分类层级不合法"),
+    CATEGORY_SORT_BATCH_EMPTY(61108, "批量排序列表不能为空"),
+    CATEGORY_SORT_BATCH_SIZE_EXCEED(61109, "批量排序数量超限"),
+    CATEGORY_SORT_ID_DUPLICATE(61110, "批量排序存在重复分类ID"),
+    CATEGORY_SORT_INVALID(61111, "分类排序参数不合法"),
 
     PROPERTY_NOT_EXISTS(61201, "规格属性不存在"),
     PROPERTY_VALUE_NOT_EXISTS(61202, "规格值不存在"),
@@ -68,4 +72,6 @@ public enum ProductConstants implements ErrorCode {
     public static final int PROPERTY_SIMPLE_ENABLED_STATUS = 0;
 
     public static final int PROPERTY_VALUE_SIMPLE_ENABLED_STATUS = 0;
+
+    public static final int CATEGORY_SORT_BATCH_MAX_SIZE = 200;
 }

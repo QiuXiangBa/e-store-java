@@ -3,6 +3,7 @@ package com.followba.store.admin.service;
 import com.followba.store.admin.vo.in.ProductCategoryListIn;
 import com.followba.store.admin.vo.in.ProductCategorySaveIn;
 import com.followba.store.admin.vo.out.ProductCategoryRespVO;
+import com.followba.store.dao.dto.ProductCategoryDTO;
 
 import java.util.List;
 
@@ -21,4 +22,6 @@ public interface ProductCategoryService {
     void validateCategory(Long id);
 
     int getCategoryLevel(Long id);
+
+    void updateCategorySortBatch(List<ProductCategoryDTO> items);
 }

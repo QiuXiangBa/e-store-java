@@ -3,6 +3,8 @@ package com.followba.store.admin.controller;
 import com.followba.store.admin.service.ProductCategoryService;
 import com.followba.store.admin.vo.in.ProductCategoryListIn;
 import com.followba.store.admin.vo.in.ProductCategorySaveIn;
+import com.followba.store.admin.vo.in.ProductCategorySortBatchUpdateIn;
+import com.followba.store.admin.convert.ProductCategoryConvert;
 import com.followba.store.admin.vo.out.CommonBooleanRespVO;
 import com.followba.store.admin.vo.out.CommonIdRespVO;
 import com.followba.store.admin.vo.out.ProductCategoryRespVO;
@@ -37,6 +39,12 @@ public class ProductCategoryController {
     @PutMapping("/update")
     public Out<CommonBooleanRespVO> updateCategory(@Valid @RequestBody ProductCategorySaveIn reqVO) {
         productCategoryService.updateCategory(reqVO);
+        return Out.success(CommonBooleanRespVO.ok());
+    }
+
+    @PutMapping("/update-sort-batch")
+    public Out<CommonBooleanRespVO> updateCategorySortBatch(@Valid @RequestBody ProductCategorySortBatchUpdateIn reqVO) {
+        productCategoryService.updateCategorySortBatch(ProductCategoryConvert.INSTANCE.toSortDTOList(reqVO.getItems()));
         return Out.success(CommonBooleanRespVO.ok());
     }
 

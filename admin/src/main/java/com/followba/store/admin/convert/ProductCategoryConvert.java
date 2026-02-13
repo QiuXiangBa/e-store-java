@@ -1,6 +1,7 @@
 package com.followba.store.admin.convert;
 
 import com.followba.store.admin.vo.in.ProductCategorySaveIn;
+import com.followba.store.admin.vo.in.ProductCategorySortItemIn;
 import com.followba.store.admin.vo.out.ProductCategoryRespVO;
 import com.followba.store.dao.dto.ProductCategoryDTO;
 import org.mapstruct.Mapper;
@@ -15,6 +16,10 @@ public interface ProductCategoryConvert {
 
     @Mapping(target = "status", expression = "java(in.getStatus().getCode())")
     ProductCategoryDTO toDTO(ProductCategorySaveIn in);
+
+    ProductCategoryDTO toDTO(ProductCategorySortItemIn in);
+
+    List<ProductCategoryDTO> toSortDTOList(List<ProductCategorySortItemIn> inList);
 
     ProductCategoryRespVO toVO(ProductCategoryDTO dto);
 
