@@ -1,7 +1,6 @@
 package com.followba.store.dao.biz;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.followba.store.dao.convert.ProductCategoryConvert;
 import com.followba.store.dao.dto.ProductCategoryDTO;
 import com.followba.store.dao.mapper.ProductCategoryMapper;
@@ -64,11 +63,6 @@ public class BizProductCategoryMapper {
         if (dtoList == null || dtoList.isEmpty()) {
             return;
         }
-        for (ProductCategoryDTO dto : dtoList) {
-            LambdaUpdateWrapper<ProductCategory> wrapper = new LambdaUpdateWrapper<>();
-            wrapper.eq(ProductCategory::getId, dto.getId())
-                    .set(ProductCategory::getSort, dto.getSort());
-            mapper.update(null, wrapper);
-        }
+        mapper.updateSortBatch(ProductCategoryConvert.INSTANCE.toPO(dtoList));
     }
 }

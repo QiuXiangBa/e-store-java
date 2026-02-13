@@ -16,4 +16,6 @@ public interface ProductCategoryConvert {
     List<ProductCategoryDTO> toDTO(List<ProductCategory> po);
 
     ProductCategory toPO(ProductCategoryDTO dto);
+
+    List<ProductCategory> toPO(List<ProductCategoryDTO> dto);
 }
