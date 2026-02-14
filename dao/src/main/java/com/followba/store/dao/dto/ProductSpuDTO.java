@@ -3,6 +3,7 @@ package com.followba.store.dao.dto;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class ProductSpuDTO {
@@ -21,11 +22,11 @@ public class ProductSpuDTO {
 
     private Long categoryId;
 
-    private Integer brandId;
+    private Long brandId;
 
     private String picUrl;
 
-    private String sliderPicUrls;
+    private List<String> sliderPicUrls;
 
     private String videoUrl;
 
@@ -42,6 +43,8 @@ public class ProductSpuDTO {
     private Integer costPrice;
 
     private Integer stock;
+
+    private List<Integer> deliveryTypes;
 
     private Long deliveryTemplateId;
 

@@ -13,7 +13,7 @@
     <result column="category_id" jdbcType="BIGINT" property="categoryId" />
     <result column="brand_id" jdbcType="INTEGER" property="brandId" />
     <result column="pic_url" jdbcType="VARCHAR" property="picUrl" />
-    <result column="slider_pic_urls" jdbcType="VARCHAR" property="sliderPicUrls" />
+    <result column="slider_pic_urls" jdbcType="VARCHAR" property="sliderPicUrls" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler" />
     <result column="video_url" jdbcType="VARCHAR" property="videoUrl" />
     <result column="sort" jdbcType="INTEGER" property="sort" />
     <result column="status" jdbcType="INTEGER" property="status" />
@@ -22,6 +22,7 @@
     <result column="market_price" jdbcType="INTEGER" property="marketPrice" />
     <result column="cost_price" jdbcType="INTEGER" property="costPrice" />
     <result column="stock" jdbcType="INTEGER" property="stock" />
+    <result column="delivery_types" jdbcType="VARCHAR" property="deliveryTypes" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler" />
     <result column="delivery_template_id" jdbcType="BIGINT" property="deliveryTemplateId" />
     <result column="recommend_hot" jdbcType="BOOLEAN" property="recommendHot" />
     <result column="recommend_benefit" jdbcType="BOOLEAN" property="recommendBenefit" />
@@ -46,7 +47,7 @@
     <!--@mbg.generated-->
     id, `name`, keyword, introduction, description, bar_code, category_id, brand_id, 
     pic_url, slider_pic_urls, video_url, sort, `status`, spec_type, price, market_price, 
-    cost_price, stock, delivery_template_id, recommend_hot, recommend_benefit, recommend_best, 
+    cost_price, stock, delivery_types, delivery_template_id, recommend_hot, recommend_benefit, recommend_best, 
     recommend_new, recommend_good, give_integral, give_coupon_template_ids, sub_commission_type, 
     activity_orders, sales_count, virtual_sales_count, browse_count, creator, create_time, 
     updater, update_time, deleted, tenant_id

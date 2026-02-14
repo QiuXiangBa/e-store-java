@@ -11,12 +11,12 @@ public enum ProductSpuStatusEnum {
     /**
      * 上架（可售）
      */
-    ENABLE(0),
+    ENABLE(1),
 
     /**
      * 下架（仓库中）
      */
-    DISABLE(1),
+    DISABLE(0),
 
     /**
      * 回收站

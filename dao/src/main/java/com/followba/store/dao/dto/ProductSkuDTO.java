@@ -3,6 +3,7 @@ package com.followba.store.dao.dto;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class ProductSkuDTO {
@@ -11,7 +12,7 @@ public class ProductSkuDTO {
 
     private Long spuId;
 
-    private String properties;
+    private List<Property> properties;
 
     private Integer price;
 
@@ -46,4 +47,16 @@ public class ProductSkuDTO {
     private Byte deleted;
 
     private Long tenantId;
+
+    @Data
+    public static class Property {
+
+        private Long propertyId;
+
+        private String propertyName;
+
+        private Long valueId;
+
+        private String valueName;
+    }
 }

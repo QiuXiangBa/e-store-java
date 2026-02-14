@@ -29,6 +29,8 @@ public enum ProductConstants implements ErrorCode {
     SKU_NOT_EXISTS(61301, "商品 SKU 不存在"),
     SKU_PROPERTIES_DUPLICATED(61302, "SKU 属性重复"),
     SKU_DUPLICATED(61303, "SKU 组合重复"),
+    SKU_PROPERTIES_NOT_EXISTS(61304, "SKU 属性不存在"),
+    SKU_ATTR_NUMBERS_MUST_BE_EQUALS(61305, "每个 SKU 的属性数量必须一致"),
 
     SPU_NOT_EXISTS(61401, "商品 SPU 不存在"),
     SPU_NOT_ENABLE(61402, "商品已下架"),
@@ -74,4 +76,14 @@ public enum ProductConstants implements ErrorCode {
     public static final int PROPERTY_VALUE_SIMPLE_ENABLED_STATUS = 0;
 
     public static final int CATEGORY_SORT_BATCH_MAX_SIZE = 200;
+
+    public static final int ALERT_STOCK = 10;
+
+    public static final Long SKU_DEFAULT_PROPERTY_ID = 0L;
+
+    public static final String SKU_DEFAULT_PROPERTY_NAME = "默认";
+
+    public static final Long SKU_DEFAULT_PROPERTY_VALUE_ID = 0L;
+
+    public static final String SKU_DEFAULT_PROPERTY_VALUE_NAME = "默认";
 }

@@ -2,6 +2,7 @@ package com.followba.store.admin.service.impl;
 
 import com.followba.store.dao.constant.ProductConstants;
 import com.followba.store.admin.convert.ProductPropertyValueConvert;
+import com.followba.store.admin.service.ProductSkuService;
 import com.followba.store.admin.service.ProductPropertyValueService;
 import com.followba.store.admin.vo.in.ProductPropertyValuePageIn;
 import com.followba.store.admin.vo.in.ProductPropertyValueSaveIn;
@@ -27,6 +28,9 @@ public class ProductPropertyValueServiceImpl implements ProductPropertyValueServ
     @Resource
     private BizProductPropertyMapper bizProductPropertyMapper;
 
+    @Resource
+    private ProductSkuService productSkuService;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long createPropertyValue(ProductPropertyValueSaveIn reqVO) {
@@ -43,11 +47,14 @@ public class ProductPropertyValueServiceImpl implements ProductPropertyValueServ
         if (reqVO.getId() == null) {
             throw new BizException(ProductConstants.PROPERTY_VALUE_NOT_EXISTS);
         }
-        validatePropertyValueExists(reqVO.getId());
+        ProductPropertyValueDTO exists = validatePropertyValueExists(reqVO.getId());
         validatePropertyExists(reqVO.getPropertyId());
         validatePropertyValueNameUnique(reqVO.getId(), reqVO.getPropertyId(), reqVO.getName());
         ProductPropertyValueDTO dto = ProductPropertyValueConvert.INSTANCE.toDTO(reqVO);
         bizProductPropertyValueMapper.updateById(dto);
+        if (!exists.getName().equals(reqVO.getName())) {
+            productSkuService.updateSkuPropertyValue(reqVO.getId(), reqVO.getName());
+        }
     }
 
     @Override
@@ -79,10 +86,12 @@ public class ProductPropertyValueServiceImpl implements ProductPropertyValueServ
         }
     }
 
-    private void validatePropertyValueExists(Long id) {
-        if (bizProductPropertyValueMapper.selectById(id) == null) {
+    private ProductPropertyValueDTO validatePropertyValueExists(Long id) {
+        ProductPropertyValueDTO value = bizProductPropertyValueMapper.selectById(id);
+        if (value == null) {
             throw new BizException(ProductConstants.PROPERTY_VALUE_NOT_EXISTS);
         }
+        return value;
     }
 
     private void validatePropertyValueNameUnique(Long id, Long propertyId, String name) {

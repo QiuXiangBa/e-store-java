@@ -9,5 +9,9 @@ public class ProductSpuCountRespVO {
 
     private Long disableCount;
 
+    private Long soldOutCount;
+
+    private Long alertStockCount;
+
     private Long recycleCount;
 }

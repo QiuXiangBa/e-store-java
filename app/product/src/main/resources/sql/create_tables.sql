@@ -180,6 +180,7 @@ CREATE TABLE `product_spu` (
                                `market_price` int NOT NULL COMMENT '市场价，单位使用：分',
                                `cost_price` int NOT NULL DEFAULT '-1' COMMENT '成本价，单位： 分',
                                `stock` int NOT NULL DEFAULT '0' COMMENT '库存',
+                               `delivery_types` varchar(128) DEFAULT NULL COMMENT '配送方式数组(JSON)',
                                `delivery_template_id` bigint NOT NULL COMMENT '物流配置模板编号',
                                `recommend_hot` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否热卖推荐: 0 默认 1 热卖',
                                `recommend_benefit` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否优惠推荐: 0 默认 1 优选',

@@ -2,6 +2,8 @@ package com.followba.store.admin.vo.out;
 
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class ProductSkuRespVO {
 
@@ -9,7 +11,7 @@ public class ProductSkuRespVO {
 
     private Long spuId;
 
-    private String properties;
+    private List<Property> properties;
 
     private Integer price;
 
@@ -32,4 +34,16 @@ public class ProductSkuRespVO {
     private Integer subCommissionSecondPrice;
 
     private Integer salesCount;
+
+    @Data
+    public static class Property {
+
+        private Long propertyId;
+
+        private String propertyName;
+
+        private Long valueId;
+
+        private String valueName;
+    }
 }

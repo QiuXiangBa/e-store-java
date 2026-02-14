@@ -11,6 +11,7 @@ import com.followba.store.dao.po.ProductPropertyValue;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.List;
 
 @Component
@@ -46,6 +47,15 @@ public class BizProductPropertyValueMapper {
         wrapper.eq(ProductPropertyValue::getPropertyId, propertyId);
         wrapper.eq(ProductPropertyValue::getName, name);
         return ProductPropertyValueConvert.INSTANCE.toDTO(mapper.selectOne(wrapper));
+    }
+
+    public List<ProductPropertyValueDTO> selectListByPropertyIds(Collection<Long> propertyIds) {
+        if (propertyIds == null || propertyIds.isEmpty()) {
+            return List.of();
+        }
+        LambdaQueryWrapper<ProductPropertyValue> wrapper = new LambdaQueryWrapper<>();
+        wrapper.in(ProductPropertyValue::getPropertyId, propertyIds);
+        return ProductPropertyValueConvert.INSTANCE.toDTO(mapper.selectList(wrapper));
     }
 
     public PageDTO<ProductPropertyValueDTO> selectPage(Integer pageNum, Integer pageSize, Long propertyId, String name, Byte status) {

@@ -11,6 +11,7 @@ import com.followba.store.dao.po.ProductProperty;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.List;
 
 @Component
@@ -39,6 +40,13 @@ public class BizProductPropertyMapper {
         LambdaQueryWrapper<ProductProperty> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(ProductProperty::getName, name);
         return ProductPropertyConvert.INSTANCE.toDTO(mapper.selectOne(wrapper));
+    }
+
+    public List<ProductPropertyDTO> selectByIds(Collection<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return List.of();
+        }
+        return ProductPropertyConvert.INSTANCE.toDTO(mapper.selectBatchIds(ids));
     }
 
     public PageDTO<ProductPropertyDTO> selectPage(Integer pageNum, Integer pageSize, String name, Byte status) {

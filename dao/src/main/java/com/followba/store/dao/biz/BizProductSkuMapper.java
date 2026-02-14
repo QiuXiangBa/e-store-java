@@ -29,6 +29,10 @@ public class BizProductSkuMapper {
         return ProductSkuConvert.INSTANCE.toDTO(mapper.selectById(id));
     }
 
+    public List<ProductSkuDTO> selectList() {
+        return ProductSkuConvert.INSTANCE.toDTO(mapper.selectList(new LambdaQueryWrapper<>()));
+    }
+
     public void deleteBySpuId(Long spuId) {
         LambdaQueryWrapper<ProductSku> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(ProductSku::getSpuId, spuId);
@@ -50,5 +54,19 @@ public class BizProductSkuMapper {
         wrapper.in(ProductSku::getSpuId, spuIds);
         wrapper.orderByAsc(ProductSku::getId);
         return ProductSkuConvert.INSTANCE.toDTO(mapper.selectList(wrapper));
+    }
+
+    public void updateBatch(List<ProductSkuDTO> list) {
+        if (list == null || list.isEmpty()) {
+            return;
+        }
+        list.stream().map(ProductSkuConvert.INSTANCE::toPO).forEach(mapper::updateById);
+    }
+
+    public void deleteByIds(Set<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return;
+        }
+        mapper.deleteBatchIds(ids);
     }
 }

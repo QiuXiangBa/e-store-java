@@ -31,12 +31,12 @@ public class ProductSpuSaveIn {
     private Long categoryId;
 
     @NotNull(message = "品牌不能为空")
-    private Integer brandId;
+    private Long brandId;
 
     @NotBlank(message = "封面图不能为空")
     private String picUrl;
 
-    private String sliderPicUrls;
+    private List<String> sliderPicUrls;
 
     private String videoUrl;
 
@@ -45,6 +45,9 @@ public class ProductSpuSaveIn {
 
     @NotNull(message = "规格类型不能为空")
     private Boolean specType;
+
+    @NotEmpty(message = "配送方式不能为空")
+    private List<Integer> deliveryTypes;
 
     private Long deliveryTemplateId;
 

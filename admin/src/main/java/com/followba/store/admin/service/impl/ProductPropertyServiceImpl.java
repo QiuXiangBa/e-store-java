@@ -2,6 +2,7 @@ package com.followba.store.admin.service.impl;
 
 import com.followba.store.dao.constant.ProductConstants;
 import com.followba.store.admin.convert.ProductPropertyConvert;
+import com.followba.store.admin.service.ProductSkuService;
 import com.followba.store.admin.service.ProductPropertyService;
 import com.followba.store.admin.vo.in.ProductPropertyPageIn;
 import com.followba.store.admin.vo.in.ProductPropertySaveIn;
@@ -27,6 +28,9 @@ public class ProductPropertyServiceImpl implements ProductPropertyService {
     @Resource
     private BizProductPropertyValueMapper bizProductPropertyValueMapper;
 
+    @Resource
+    private ProductSkuService productSkuService;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long createProperty(ProductPropertySaveIn reqVO) {
@@ -44,8 +48,12 @@ public class ProductPropertyServiceImpl implements ProductPropertyService {
         }
         validatePropertyExists(reqVO.getId());
         validatePropertyNameUnique(reqVO.getId(), reqVO.getName());
+        ProductPropertyDTO exists = bizProductPropertyMapper.selectById(reqVO.getId());
         ProductPropertyDTO dto = ProductPropertyConvert.INSTANCE.toDTO(reqVO);
         bizProductPropertyMapper.updateById(dto);
+        if (!exists.getName().equals(reqVO.getName())) {
+            productSkuService.updateSkuProperty(reqVO.getId(), reqVO.getName());
+        }
     }
 
     @Override

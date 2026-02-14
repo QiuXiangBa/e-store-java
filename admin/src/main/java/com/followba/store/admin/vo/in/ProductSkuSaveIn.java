@@ -3,12 +3,14 @@ package com.followba.store.admin.vo.in;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.util.List;
+
 @Data
 public class ProductSkuSaveIn {
 
     private Long id;
 
-    private String properties;
+    private List<Property> properties;
 
     @NotNull(message = "价格不能为空")
     private Integer price;
@@ -34,4 +36,16 @@ public class ProductSkuSaveIn {
     private Integer subCommissionFirstPrice;
 
     private Integer subCommissionSecondPrice;
+
+    @Data
+    public static class Property {
+
+        private Long propertyId;
+
+        private String propertyName;
+
+        private Long valueId;
+
+        private String valueName;
+    }
 }

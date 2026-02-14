@@ -6,7 +6,7 @@
     <!--@Table product_sku-->
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="spu_id" jdbcType="BIGINT" property="spuId" />
-    <result column="properties" jdbcType="VARCHAR" property="properties" />
+    <result column="properties" jdbcType="VARCHAR" property="properties" typeHandler="com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler" />
     <result column="price" jdbcType="INTEGER" property="price" />
     <result column="market_price" jdbcType="INTEGER" property="marketPrice" />
     <result column="cost_price" jdbcType="INTEGER" property="costPrice" />
@@ -38,8 +38,9 @@
      weight, volume, sub_commission_first_price, sub_commission_second_price, sales_count)
     values
     <foreach collection="list" item="item" separator=",">
-      (#{item.spuId}, #{item.properties}, #{item.price}, #{item.marketPrice}, #{item.costPrice}, #{item.barCode}, #{item.picUrl}, #{item.stock},
+      (#{item.spuId}, #{item.properties,typeHandler=com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler}, #{item.price}, #{item.marketPrice}, #{item.costPrice}, #{item.barCode}, #{item.picUrl}, #{item.stock},
        #{item.weight}, #{item.volume}, #{item.subCommissionFirstPrice}, #{item.subCommissionSecondPrice}, #{item.salesCount})
     </foreach>
   </insert>
+
 </mapper>

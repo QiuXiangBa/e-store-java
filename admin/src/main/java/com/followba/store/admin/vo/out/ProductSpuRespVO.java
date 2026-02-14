@@ -22,11 +22,11 @@ public class ProductSpuRespVO {
 
     private Long categoryId;
 
-    private Integer brandId;
+    private Long brandId;
 
     private String picUrl;
 
-    private String sliderPicUrls;
+    private List<String> sliderPicUrls;
 
     private String videoUrl;
 
@@ -35,6 +35,8 @@ public class ProductSpuRespVO {
     private Byte status;
 
     private Boolean specType;
+
+    private List<Integer> deliveryTypes;
 
     private Long deliveryTemplateId;
 

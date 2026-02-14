@@ -139,15 +139,22 @@ public class ProductSpuServiceImpl implements ProductSpuService {
     @Override
     public PageResp<ProductSpuRespVO> getSpuPage(ProductSpuPageIn reqVO) {
         PageDTO<ProductSpuDTO> page = bizProductSpuMapper.selectPage(reqVO.getPageNum(), reqVO.getPageSize(), reqVO.getName(),
-                reqVO.getStatus(), reqVO.getCategoryId(), reqVO.getBrandId());
+                reqVO.getTabType(), reqVO.getCategoryId(), reqVO.getBrandId());
         return PageResp.of(page.getTotal(), buildSpuRespList(page.getList()));
     }
 
     @Override
     public ProductSpuCountRespVO getTabsCount() {
         ProductSpuCountRespVO resp = new ProductSpuCountRespVO();
+        // Tab 0: 出售中 / For sale
         resp.setEnableCount(countByStatus(ProductSpuStatusEnum.ENABLE.getCode()));
+        // Tab 1: 仓库中 / In warehouse
         resp.setDisableCount(countByStatus(ProductSpuStatusEnum.DISABLE.getCode()));
+        // Tab 2: 已售罄 / Sold out
+        resp.setSoldOutCount(bizProductSpuMapper.countByStock(ProductConstants.DEFAULT_ZERO));
+        // Tab 3: 警戒库存 / Alert stock
+        resp.setAlertStockCount(bizProductSpuMapper.countAlertStock());
+        // Tab 4: 回收站 / Recycle bin
         resp.setRecycleCount(countByStatus(ProductSpuStatusEnum.RECYCLE.getCode()));
         return resp;
     }
@@ -166,7 +173,7 @@ public class ProductSpuServiceImpl implements ProductSpuService {
         if (productCategoryService.getCategoryLevel(reqVO.getCategoryId()) < ProductConstants.CATEGORY_MIN_LEVEL) {
             throw new BizException(ProductConstants.CATEGORY_LEVEL_ERROR);
         }
-        productBrandService.validateProductBrand(reqVO.getBrandId().longValue());
+        productBrandService.validateProductBrand(reqVO.getBrandId());
     }
 
     private ProductSpuDTO validateSpuExists(Long id) {

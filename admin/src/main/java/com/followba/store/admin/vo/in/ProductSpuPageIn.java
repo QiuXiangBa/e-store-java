@@ -10,9 +10,10 @@ public class ProductSpuPageIn extends PageReq {
 
     private String name;
 
-    private Byte status;
+    /** tab 类型（0-出售中，1-仓库中，2-已售罄，3-警戒库存，4-回收站） / Tab type. */
+    private Integer tabType;
 
     private Long categoryId;
 
-    private Integer brandId;
+    private Long brandId;
 }

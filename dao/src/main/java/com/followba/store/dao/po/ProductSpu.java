@@ -4,14 +4,16 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import java.util.Date;
+import java.util.List;
 import lombok.Data;
 
 /**
  * 商品spu
  */
 @Data
-@TableName(value = "product_spu")
+@TableName(value = "product_spu", autoResultMap = true)
 public class ProductSpu {
     /**
      * 商品 SPU 编号，自增
@@ -59,7 +61,7 @@ public class ProductSpu {
      * 商品品牌编号
      */
     @TableField(value = "brand_id")
-    private Integer brandId;
+    private Long brandId;
 
     /**
      * 商品封面图
@@ -72,8 +74,8 @@ public class ProductSpu {
      * 数组，以逗号分隔
      * 最多上传15张
      */
-    @TableField(value = "slider_pic_urls")
-    private String sliderPicUrls;
+    @TableField(value = "slider_pic_urls", typeHandler = JacksonTypeHandler.class)
+    private List<String> sliderPicUrls;
 
     /**
      * 商品视频
@@ -122,6 +124,12 @@ public class ProductSpu {
      */
     @TableField(value = "stock")
     private Integer stock;
+
+    /**
+     * 配送方式
+     */
+    @TableField(value = "delivery_types", typeHandler = JacksonTypeHandler.class)
+    private List<Integer> deliveryTypes;
 
     /**
      * 物流配置模板编号

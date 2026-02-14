@@ -20,4 +20,8 @@ public interface ProductSkuService {
     List<ProductSkuDTO> getSkuListBySpuId(Long spuId);
 
     Map<Long, List<ProductSkuDTO>> getSkuMapBySpuIds(Set<Long> spuIds);
+
+    int updateSkuProperty(Long propertyId, String propertyName);
+
+    int updateSkuPropertyValue(Long propertyValueId, String propertyValueName);
 }

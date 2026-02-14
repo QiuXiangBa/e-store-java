@@ -4,14 +4,16 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
 import java.util.Date;
+import java.util.List;
 import lombok.Data;
 
 /**
  * 商品sku
  */
 @Data
-@TableName(value = "product_sku")
+@TableName(value = "product_sku", autoResultMap = true)
 public class ProductSku {
     @TableId(value = "id", type = IdType.AUTO)
     private Long id;
@@ -25,8 +27,8 @@ public class ProductSku {
     /**
      * 属性数组，JSON 格式
      */
-    @TableField(value = "properties")
-    private String properties;
+    @TableField(value = "properties", typeHandler = JacksonTypeHandler.class)
+    private List<Property> properties;
 
     /**
      * 商品价格，单位：分
@@ -111,4 +113,16 @@ public class ProductSku {
 
     @TableField(value = "tenant_id")
     private Long tenantId;
+
+    @Data
+    public static class Property {
+
+        private Long propertyId;
+
+        private String propertyName;
+
+        private Long valueId;
+
+        private String valueName;
+    }
 }
