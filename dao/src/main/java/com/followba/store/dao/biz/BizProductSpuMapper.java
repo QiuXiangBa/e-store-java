@@ -20,7 +20,9 @@ public class BizProductSpuMapper {
     private ProductSpuMapper mapper;
 
     public void insert(ProductSpuDTO dto) {
-        mapper.insert(ProductSpuConvert.INSTANCE.toPO(dto));
+        ProductSpu po = ProductSpuConvert.INSTANCE.toPO(dto);
+        mapper.insert(po);
+        dto.setId(po.getId());
     }
 
     public void updateById(ProductSpuDTO dto) {
