@@ -19,5 +19,5 @@ public interface ProductPropertyService {
 
     PageResp<ProductPropertyRespVO> getPropertyPage(ProductPropertyPageIn reqVO);
 
-    List<ProductPropertyRespVO> getPropertySimpleList();
+    List<ProductPropertyRespVO> getPropertySimpleList(Integer propertyType);
 }

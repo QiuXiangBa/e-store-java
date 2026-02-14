@@ -58,7 +58,7 @@ public class ProductPropertyController {
     }
 
     @GetMapping("/simple-list")
-    public Out<List<ProductPropertyRespVO>> getPropertySimpleList() {
-        return Out.success(productPropertyService.getPropertySimpleList());
+    public Out<List<ProductPropertyRespVO>> getPropertySimpleList(@RequestParam(value = "propertyType", required = false) Integer propertyType) {
+        return Out.success(productPropertyService.getPropertySimpleList(propertyType));
     }
 }

@@ -99,6 +99,8 @@ DROP TABLE IF EXISTS `product_property`;
 CREATE TABLE `product_property` (
                                     `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
                                     `name` varchar(64) DEFAULT NULL COMMENT '规格名称',
+                                    `property_type` int NOT NULL DEFAULT '1' COMMENT '属性类型：0 展示属性，1 销售属性',
+                                    `input_type` int NOT NULL DEFAULT '1' COMMENT '录入类型：0 手工输入，1 预设值选择',
                                     `status` int DEFAULT NULL COMMENT '状态： 0 开启 ，1 禁用',
                                     `creator` varchar(64) DEFAULT '',
                                     `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -128,6 +130,27 @@ CREATE TABLE `product_property_value` (
                                           `remark` varchar(255) DEFAULT NULL COMMENT '备注',
                                           PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='规格值';
+
+-- ----------------------------
+-- Table structure for product_category_property
+-- ----------------------------
+DROP TABLE IF EXISTS `product_category_property`;
+CREATE TABLE `product_category_property` (
+                                             `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+                                             `category_id` bigint NOT NULL COMMENT '类目编号',
+                                             `property_id` bigint NOT NULL COMMENT '属性编号',
+                                             `enabled` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否启用',
+                                             `required` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否必填',
+                                             `sort` int NOT NULL DEFAULT '0' COMMENT '排序',
+                                             `creator` varchar(64) DEFAULT '',
+                                             `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                             `updater` varchar(64) DEFAULT '',
+                                             `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                             `deleted` tinyint(1) NOT NULL DEFAULT '0',
+                                             `tenant_id` bigint NOT NULL DEFAULT '0',
+                                             PRIMARY KEY (`id`),
+                                             UNIQUE KEY `uk_category_property` (`category_id`, `property_id`, `tenant_id`, `deleted`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='商品类目属性绑定';
 
 -- ----------------------------
 -- Table structure for product_sku
@@ -202,6 +225,27 @@ CREATE TABLE `product_spu` (
                                `tenant_id` bigint NOT NULL DEFAULT '0',
                                PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC COMMENT='商品spu';
+
+-- ----------------------------
+-- Table structure for product_spu_property
+-- ----------------------------
+DROP TABLE IF EXISTS `product_spu_property`;
+CREATE TABLE `product_spu_property` (
+                                        `id` bigint NOT NULL AUTO_INCREMENT COMMENT '主键',
+                                        `spu_id` bigint NOT NULL COMMENT '商品 SPU 编号',
+                                        `property_id` bigint NOT NULL COMMENT '展示属性编号',
+                                        `property_name` varchar(64) NOT NULL COMMENT '展示属性名称',
+                                        `value_text` varchar(255) NOT NULL COMMENT '展示属性值',
+                                        `sort` int NOT NULL DEFAULT '0' COMMENT '排序',
+                                        `creator` varchar(64) DEFAULT '',
+                                        `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                        `updater` varchar(64) DEFAULT '',
+                                        `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                                        `deleted` tinyint(1) NOT NULL DEFAULT '0',
+                                        `tenant_id` bigint NOT NULL DEFAULT '0',
+                                        PRIMARY KEY (`id`),
+                                        KEY `idx_spu` (`spu_id`, `tenant_id`, `deleted`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='SPU 展示属性值';
 -- ----------------------------
 -- Table structure for system_oauth2_access_token
 -- ----------------------------

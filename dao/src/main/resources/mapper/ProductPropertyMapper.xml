@@ -6,6 +6,8 @@
     <!--@Table product_property-->
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="property_type" jdbcType="INTEGER" property="propertyType" />
+    <result column="input_type" jdbcType="INTEGER" property="inputType" />
     <result column="status" jdbcType="INTEGER" property="status" />
     <result column="creator" jdbcType="VARCHAR" property="creator" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -17,7 +19,7 @@
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, `name`, `status`, creator, create_time, updater, update_time, deleted, tenant_id, 
+    id, `name`, property_type, input_type, `status`, creator, create_time, updater, update_time, deleted, tenant_id, 
     remark
   </sql>
 </mapper>

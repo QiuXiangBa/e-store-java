@@ -70,6 +70,9 @@ public class ProductSpuSaveIn {
     private String activityOrders;
 
     @Valid
+    private List<ProductSpuDisplayPropertyIn> displayProperties;
+
+    @Valid
     @NotEmpty(message = "SKU 列表不能为空")
     private List<ProductSkuSaveIn> skus;
 }

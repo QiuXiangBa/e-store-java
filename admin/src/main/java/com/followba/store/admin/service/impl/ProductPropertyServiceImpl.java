@@ -13,6 +13,7 @@ import com.followba.store.dao.biz.BizProductPropertyMapper;
 import com.followba.store.dao.biz.BizProductPropertyValueMapper;
 import com.followba.store.dao.dto.PageDTO;
 import com.followba.store.dao.dto.ProductPropertyDTO;
+import com.followba.store.dao.enums.ProductPropertyTypeEnum;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,8 +35,12 @@ public class ProductPropertyServiceImpl implements ProductPropertyService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long createProperty(ProductPropertySaveIn reqVO) {
+        validatePropertyType(reqVO.getPropertyType());
         validatePropertyNameUnique(null, reqVO.getName());
         ProductPropertyDTO dto = ProductPropertyConvert.INSTANCE.toDTO(reqVO);
+        if (dto.getInputType() == null) {
+            dto.setInputType(ProductConstants.PRODUCT_PROPERTY_DEFAULT_INPUT_TYPE);
+        }
         bizProductPropertyMapper.insert(dto);
         return dto.getId();
     }
@@ -46,10 +51,14 @@ public class ProductPropertyServiceImpl implements ProductPropertyService {
         if (reqVO.getId() == null) {
             throw new BizException(ProductConstants.PROPERTY_NOT_EXISTS);
         }
+        validatePropertyType(reqVO.getPropertyType());
         validatePropertyExists(reqVO.getId());
         validatePropertyNameUnique(reqVO.getId(), reqVO.getName());
         ProductPropertyDTO exists = bizProductPropertyMapper.selectById(reqVO.getId());
         ProductPropertyDTO dto = ProductPropertyConvert.INSTANCE.toDTO(reqVO);
+        if (dto.getInputType() == null) {
+            dto.setInputType(ProductConstants.PRODUCT_PROPERTY_DEFAULT_INPUT_TYPE);
+        }
         bizProductPropertyMapper.updateById(dto);
         if (!exists.getName().equals(reqVO.getName())) {
             productSkuService.updateSkuProperty(reqVO.getId(), reqVO.getName());
@@ -73,13 +82,13 @@ public class ProductPropertyServiceImpl implements ProductPropertyService {
 
     @Override
     public PageResp<ProductPropertyRespVO> getPropertyPage(ProductPropertyPageIn reqVO) {
-        PageDTO<ProductPropertyDTO> page = bizProductPropertyMapper.selectPage(reqVO.getPageNum(), reqVO.getPageSize(), reqVO.getName(), reqVO.getStatus());
+        PageDTO<ProductPropertyDTO> page = bizProductPropertyMapper.selectPage(reqVO.getPageNum(), reqVO.getPageSize(), reqVO.getName(), reqVO.getStatus(), reqVO.getPropertyType());
         return ProductPropertyConvert.INSTANCE.toVO(page);
     }
 
     @Override
-    public List<ProductPropertyRespVO> getPropertySimpleList() {
-        return ProductPropertyConvert.INSTANCE.toVO(bizProductPropertyMapper.selectSimpleList());
+    public List<ProductPropertyRespVO> getPropertySimpleList(Integer propertyType) {
+        return ProductPropertyConvert.INSTANCE.toVO(bizProductPropertyMapper.selectSimpleList(propertyType));
     }
 
     private void validatePropertyExists(Long id) {
@@ -96,5 +105,18 @@ public class ProductPropertyServiceImpl implements ProductPropertyService {
         if (id == null || !id.equals(property.getId())) {
             throw new BizException(ProductConstants.PROPERTY_NAME_EXISTS);
         }
+    }
+
+    private void validatePropertyType(Integer propertyType) {
+        if (propertyType == null) {
+            throw new BizException(ProductConstants.PROPERTY_TYPE_INVALID);
+        }
+        if (propertyType.equals(ProductPropertyTypeEnum.DISPLAY.getCode())) {
+            return;
+        }
+        if (propertyType.equals(ProductPropertyTypeEnum.SALES.getCode())) {
+            return;
+        }
+        throw new BizException(ProductConstants.PROPERTY_TYPE_INVALID);
     }
 }

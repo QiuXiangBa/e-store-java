@@ -11,4 +11,6 @@ public class ProductPropertyPageIn extends PageReq {
     private String name;
 
     private Byte status;
+
+    private Integer propertyType;
 }
