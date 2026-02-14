@@ -1,21 +1,22 @@
 package com.followba.store.dao.dto;
 
+import java.util.Date;
 import lombok.Data;
 
-import java.util.Date;
-
 @Data
-public class ProductPropertyDTO {
+public class ProductSpuPropertyDTO {
 
     private Long id;
 
-    private String name;
+    private Long spuId;
 
-    private Integer propertyType;
+    private Long propertyId;
 
-    private Integer inputType;
+    private String propertyName;
 
-    private Integer status;
+    private String valueText;
+
+    private Integer sort;
 
     private String creator;
 
@@ -28,6 +29,4 @@ public class ProductPropertyDTO {
     private Boolean deleted;
 
     private Long tenantId;
-
-    private String remark;
 }

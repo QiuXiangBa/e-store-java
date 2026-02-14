@@ -74,5 +74,7 @@ public class ProductSpuRespVO {
 
     private Date createTime;
 
+    private List<ProductSpuDisplayPropertyRespVO> displayProperties;
+
     private List<ProductSkuRespVO> skus;
 }

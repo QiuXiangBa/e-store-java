@@ -3,11 +3,13 @@ package com.followba.store.admin.service.impl;
 import com.followba.store.dao.constant.ProductConstants;
 import com.followba.store.admin.convert.ProductSkuConvert;
 import com.followba.store.admin.convert.ProductSpuConvert;
+import com.followba.store.admin.convert.ProductSpuPropertyConvert;
 import com.followba.store.admin.service.ProductBrandService;
 import com.followba.store.admin.service.ProductCategoryService;
 import com.followba.store.admin.service.ProductSkuService;
 import com.followba.store.admin.service.ProductSpuService;
 import com.followba.store.admin.vo.in.ProductSkuSaveIn;
+import com.followba.store.admin.vo.in.ProductSpuDisplayPropertyIn;
 import com.followba.store.admin.vo.in.ProductSpuPageIn;
 import com.followba.store.admin.vo.in.ProductSpuSaveIn;
 import com.followba.store.admin.vo.in.ProductSpuUpdateStatusIn;
@@ -16,19 +18,28 @@ import com.followba.store.admin.vo.out.ProductSpuRespVO;
 import com.followba.store.admin.vo.out.ProductSpuSimpleRespVO;
 import com.followba.store.common.exception.BizException;
 import com.followba.store.common.resp.PageResp;
+import com.followba.store.dao.biz.BizProductCategoryPropertyMapper;
+import com.followba.store.dao.biz.BizProductPropertyMapper;
 import com.followba.store.dao.biz.BizProductSpuMapper;
+import com.followba.store.dao.biz.BizProductSpuPropertyMapper;
+import com.followba.store.dao.dto.ProductCategoryPropertyDTO;
 import com.followba.store.dao.dto.PageDTO;
+import com.followba.store.dao.dto.ProductPropertyDTO;
 import com.followba.store.dao.dto.ProductSkuDTO;
 import com.followba.store.dao.dto.ProductSpuDTO;
+import com.followba.store.dao.dto.ProductSpuPropertyDTO;
+import com.followba.store.dao.enums.ProductPropertyTypeEnum;
 import com.followba.store.dao.enums.ProductSpuStatusEnum;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -46,10 +57,21 @@ public class ProductSpuServiceImpl implements ProductSpuService {
     @Resource
     private ProductCategoryService productCategoryService;
 
+    @Resource
+    private BizProductCategoryPropertyMapper bizProductCategoryPropertyMapper;
+
+    @Resource
+    private BizProductPropertyMapper bizProductPropertyMapper;
+
+    @Resource
+    private BizProductSpuPropertyMapper bizProductSpuPropertyMapper;
+
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Long createSpu(ProductSpuSaveIn reqVO) {
         validateSpuRefs(reqVO);
+        validateDisplayProperties(reqVO.getCategoryId(), reqVO.getDisplayProperties());
+        validateSkuCategorySalesProperties(reqVO.getCategoryId(), reqVO.getSkus(), reqVO.getSpecType());
         List<ProductSkuSaveIn> skus = reqVO.getSkus();
         productSkuService.validateSkuList(skus, reqVO.getSpecType());
 
@@ -61,6 +83,7 @@ public class ProductSpuServiceImpl implements ProductSpuService {
         bizProductSpuMapper.insert(spu);
 
         productSkuService.createSkuList(spu.getId(), skus);
+        replaceSpuDisplayProperties(spu.getId(), reqVO.getDisplayProperties());
         return spu.getId();
     }
 
@@ -72,6 +95,8 @@ public class ProductSpuServiceImpl implements ProductSpuService {
         }
         ProductSpuDTO exists = validateSpuExists(reqVO.getId());
         validateSpuRefs(reqVO);
+        validateDisplayProperties(reqVO.getCategoryId(), reqVO.getDisplayProperties());
+        validateSkuCategorySalesProperties(reqVO.getCategoryId(), reqVO.getSkus(), reqVO.getSpecType());
         List<ProductSkuSaveIn> skus = reqVO.getSkus();
         productSkuService.validateSkuList(skus, reqVO.getSpecType());
 
@@ -83,6 +108,7 @@ public class ProductSpuServiceImpl implements ProductSpuService {
         bizProductSpuMapper.updateById(update);
 
         productSkuService.updateSkuList(update.getId(), skus);
+        replaceSpuDisplayProperties(update.getId(), reqVO.getDisplayProperties());
     }
 
     @Override
@@ -108,6 +134,7 @@ public class ProductSpuServiceImpl implements ProductSpuService {
         }
         bizProductSpuMapper.deleteById(id);
         productSkuService.deleteSkuBySpuId(id);
+        bizProductSpuPropertyMapper.deleteBySpuId(id);
     }
 
     @Override
@@ -119,6 +146,7 @@ public class ProductSpuServiceImpl implements ProductSpuService {
         ProductSpuRespVO resp = ProductSpuConvert.INSTANCE.toVO(spu);
         Map<Long, List<ProductSkuDTO>> skuMap = productSkuService.getSkuMapBySpuIds(Set.of(spu.getId()));
         resp.setSkus(ProductSkuConvert.INSTANCE.toVO(skuMap.getOrDefault(spu.getId(), List.of())));
+        resp.setDisplayProperties(ProductSpuPropertyConvert.INSTANCE.toVO(bizProductSpuPropertyMapper.selectListBySpuId(spu.getId())));
         return resp;
     }
 
@@ -211,10 +239,128 @@ public class ProductSpuServiceImpl implements ProductSpuService {
         }
         Set<Long> spuIds = spuList.stream().map(ProductSpuDTO::getId).collect(Collectors.toSet());
         Map<Long, List<ProductSkuDTO>> skuMap = productSkuService.getSkuMapBySpuIds(spuIds);
+        Map<Long, List<ProductSpuPropertyDTO>> displayPropertyMap = bizProductSpuPropertyMapper.selectListBySpuIds(spuIds)
+                .stream()
+                .collect(Collectors.groupingBy(ProductSpuPropertyDTO::getSpuId));
         return spuList.stream().map(spu -> {
             ProductSpuRespVO resp = toSpuResp(spu);
             resp.setSkus(ProductSkuConvert.INSTANCE.toVO(skuMap.getOrDefault(spu.getId(), List.of())));
+            resp.setDisplayProperties(ProductSpuPropertyConvert.INSTANCE.toVO(displayPropertyMap.getOrDefault(spu.getId(), List.of())));
             return resp;
         }).toList();
+    }
+
+    private void replaceSpuDisplayProperties(Long spuId, List<ProductSpuDisplayPropertyIn> displayProperties) {
+        if (displayProperties == null || displayProperties.isEmpty()) {
+            bizProductSpuPropertyMapper.replaceBySpuId(spuId, List.of());
+            return;
+        }
+        List<ProductSpuPropertyDTO> dtoList = ProductSpuPropertyConvert.INSTANCE.toDTO(displayProperties);
+        dtoList.forEach(item -> item.setSpuId(spuId));
+        Set<Long> propertyIds = dtoList.stream().map(ProductSpuPropertyDTO::getPropertyId).collect(Collectors.toSet());
+        Map<Long, ProductPropertyDTO> propertyMap = bizProductPropertyMapper.selectByIds(propertyIds)
+                .stream()
+                .collect(Collectors.toMap(ProductPropertyDTO::getId, Function.identity(), (left, right) -> left));
+        dtoList.forEach(item -> {
+            ProductPropertyDTO property = propertyMap.get(item.getPropertyId());
+            if (property != null) {
+                item.setPropertyName(property.getName());
+            }
+        });
+        bizProductSpuPropertyMapper.replaceBySpuId(spuId, dtoList);
+    }
+
+    private void validateDisplayProperties(Long categoryId, List<ProductSpuDisplayPropertyIn> displayProperties) {
+        if (displayProperties == null || displayProperties.isEmpty()) {
+            validateRequiredDisplayProperties(categoryId, Set.of());
+            return;
+        }
+        Set<Long> propertyIds = new HashSet<>();
+        for (ProductSpuDisplayPropertyIn item : displayProperties) {
+            if (!propertyIds.add(item.getPropertyId())) {
+                throw new BizException(ProductConstants.DISPLAY_PROPERTY_ID_DUPLICATE);
+            }
+        }
+        List<ProductPropertyDTO> propertyList = bizProductPropertyMapper.selectByIds(propertyIds);
+        if (propertyList.size() != propertyIds.size()) {
+            throw new BizException(ProductConstants.PROPERTY_NOT_EXISTS);
+        }
+        for (ProductPropertyDTO property : propertyList) {
+            if (property.getPropertyType() == null || ProductPropertyTypeEnum.DISPLAY.getCode() != property.getPropertyType()) {
+                throw new BizException(ProductConstants.DISPLAY_PROPERTY_NOT_DISPLAY);
+            }
+        }
+        validateRequiredDisplayProperties(categoryId, propertyIds);
+    }
+
+    private void validateRequiredDisplayProperties(Long categoryId, Set<Long> submittedPropertyIds) {
+        List<ProductCategoryPropertyDTO> requiredList = bizProductCategoryPropertyMapper.selectEnabledRequiredList(categoryId);
+        if (requiredList.isEmpty()) {
+            return;
+        }
+        Set<Long> allRequiredIds = requiredList.stream().map(ProductCategoryPropertyDTO::getPropertyId).collect(Collectors.toSet());
+        Map<Long, ProductPropertyDTO> propertyMap = bizProductPropertyMapper.selectByIds(allRequiredIds)
+                .stream()
+                .collect(Collectors.toMap(ProductPropertyDTO::getId, Function.identity(), (left, right) -> left));
+        Set<Long> requiredDisplayIds = propertyMap.values().stream()
+                .filter(property -> property.getPropertyType() != null && ProductPropertyTypeEnum.DISPLAY.getCode() == property.getPropertyType())
+                .map(ProductPropertyDTO::getId)
+                .collect(Collectors.toSet());
+        if (submittedPropertyIds.containsAll(requiredDisplayIds)) {
+            return;
+        }
+        throw new BizException(ProductConstants.DISPLAY_PROPERTY_REQUIRED_MISSING);
+    }
+
+    private void validateSkuCategorySalesProperties(Long categoryId, List<ProductSkuSaveIn> skus, Boolean specType) {
+        if (!Boolean.TRUE.equals(specType)) {
+            return;
+        }
+        Set<Long> propertyIds = skus.stream()
+                .filter(sku -> sku.getProperties() != null)
+                .flatMap(sku -> sku.getProperties().stream())
+                .map(ProductSkuSaveIn.Property::getPropertyId)
+                .filter(id -> id != null && !id.equals(ProductConstants.SKU_DEFAULT_PROPERTY_ID))
+                .collect(Collectors.toSet());
+        if (propertyIds.isEmpty()) {
+            throw new BizException(ProductConstants.SKU_PROPERTIES_NOT_EXISTS);
+        }
+
+        List<ProductPropertyDTO> propertyList = bizProductPropertyMapper.selectByIds(propertyIds);
+        if (propertyList.size() != propertyIds.size()) {
+            throw new BizException(ProductConstants.SKU_PROPERTIES_NOT_EXISTS);
+        }
+        for (ProductPropertyDTO property : propertyList) {
+            if (property.getPropertyType() == null || ProductPropertyTypeEnum.SALES.getCode() != property.getPropertyType()) {
+                throw new BizException(ProductConstants.SKU_PROPERTY_NOT_SALES);
+            }
+        }
+
+        List<ProductCategoryPropertyDTO> bindList = bizProductCategoryPropertyMapper.selectListByCategoryId(categoryId);
+        Set<Long> enabledSalesPropertyIds = new HashSet<>();
+        Set<Long> requiredSalesPropertyIds = new HashSet<>();
+        if (!bindList.isEmpty()) {
+            Set<Long> bindPropertyIds = bindList.stream().map(ProductCategoryPropertyDTO::getPropertyId).collect(Collectors.toSet());
+            Map<Long, ProductPropertyDTO> bindPropertyMap = bizProductPropertyMapper.selectByIds(bindPropertyIds).stream()
+                    .collect(Collectors.toMap(ProductPropertyDTO::getId, Function.identity(), (left, right) -> left));
+            for (ProductCategoryPropertyDTO bind : bindList) {
+                ProductPropertyDTO property = bindPropertyMap.get(bind.getPropertyId());
+                if (property == null || property.getPropertyType() == null || ProductPropertyTypeEnum.SALES.getCode() != property.getPropertyType()) {
+                    continue;
+                }
+                if (Boolean.TRUE.equals(bind.getEnabled())) {
+                    enabledSalesPropertyIds.add(bind.getPropertyId());
+                }
+                if (Boolean.TRUE.equals(bind.getEnabled()) && Boolean.TRUE.equals(bind.getRequired())) {
+                    requiredSalesPropertyIds.add(bind.getPropertyId());
+                }
+            }
+        }
+        if (!enabledSalesPropertyIds.containsAll(propertyIds)) {
+            throw new BizException(ProductConstants.CATEGORY_PROPERTY_NOT_ENABLED);
+        }
+        if (!propertyIds.containsAll(requiredSalesPropertyIds)) {
+            throw new BizException(ProductConstants.CATEGORY_PROPERTY_REQUIRED_MISSING);
+        }
     }
 }

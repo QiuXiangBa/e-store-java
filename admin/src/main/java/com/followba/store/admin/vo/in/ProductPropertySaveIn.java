@@ -12,6 +12,11 @@ public class ProductPropertySaveIn {
     @NotBlank(message = "规格名称不能为空")
     private String name;
 
+    @NotNull(message = "属性类型不能为空")
+    private Integer propertyType;
+
+    private Integer inputType;
+
     @NotNull(message = "状态不能为空")
     private Byte status;
 

@@ -26,6 +26,18 @@ public class ProductProperty {
     private String name;
 
     /**
+     * 属性类型：0 展示属性，1 销售属性 / Property type: 0 display, 1 sales.
+     */
+    @TableField(value = "property_type")
+    private Integer propertyType;
+
+    /**
+     * 录入类型：0 手工输入，1 预设值选择 / Input type: 0 manual, 1 select.
+     */
+    @TableField(value = "input_type")
+    private Integer inputType;
+
+    /**
      * 状态： 0 开启 ，1 禁用
      */
     @TableField(value = "`status`")

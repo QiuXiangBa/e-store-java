@@ -25,6 +25,16 @@ public enum ProductConstants implements ErrorCode {
     PROPERTY_NAME_EXISTS(61203, "规格属性名称已存在"),
     PROPERTY_VALUE_NAME_EXISTS(61204, "规格值名称已存在"),
     PROPERTY_HAS_VALUE(61205, "该规格下仍有规格值，不能删除"),
+    PROPERTY_TYPE_INVALID(61206, "规格属性类型不合法"),
+    CATEGORY_PROPERTY_BATCH_EMPTY(61207, "类目属性绑定列表不能为空"),
+    CATEGORY_PROPERTY_ID_DUPLICATE(61208, "类目属性绑定存在重复属性ID"),
+    CATEGORY_PROPERTY_NOT_ENABLED(61209, "该类目未启用此销售属性"),
+    CATEGORY_PROPERTY_REQUIRED_MISSING(61210, "缺少类目必填销售属性"),
+    SKU_PROPERTY_NOT_SALES(61211, "SKU 仅允许使用销售属性"),
+    DISPLAY_PROPERTY_NOT_DISPLAY(61212, "展示属性仅允许使用展示属性"),
+    DISPLAY_PROPERTY_REQUIRED_MISSING(61213, "缺少类目必填展示属性"),
+    DISPLAY_PROPERTY_ID_DUPLICATE(61214, "展示属性存在重复属性ID"),
+    CATEGORY_PROPERTY_BATCH_SIZE_EXCEED(61215, "类目属性绑定数量超限"),
 
     SKU_NOT_EXISTS(61301, "商品 SKU 不存在"),
     SKU_PROPERTIES_DUPLICATED(61302, "SKU 属性重复"),
@@ -79,6 +89,8 @@ public enum ProductConstants implements ErrorCode {
 
     public static final int ALERT_STOCK = 10;
 
+    public static final int CATEGORY_PROPERTY_MAX_SIZE = 200;
+
     public static final Long SKU_DEFAULT_PROPERTY_ID = 0L;
 
     public static final String SKU_DEFAULT_PROPERTY_NAME = "默认";
@@ -86,4 +98,6 @@ public enum ProductConstants implements ErrorCode {
     public static final Long SKU_DEFAULT_PROPERTY_VALUE_ID = 0L;
 
     public static final String SKU_DEFAULT_PROPERTY_VALUE_NAME = "默认";
+
+    public static final int PRODUCT_PROPERTY_DEFAULT_INPUT_TYPE = 1;
 }

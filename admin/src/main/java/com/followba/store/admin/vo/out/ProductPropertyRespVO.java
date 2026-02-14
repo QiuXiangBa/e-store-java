@@ -11,6 +11,10 @@ public class ProductPropertyRespVO {
 
     private String name;
 
+    private Integer propertyType;
+
+    private Integer inputType;
+
     private Byte status;
 
     private String remark;

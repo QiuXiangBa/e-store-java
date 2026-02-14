@@ -49,19 +49,21 @@ public class BizProductPropertyMapper {
         return ProductPropertyConvert.INSTANCE.toDTO(mapper.selectBatchIds(ids));
     }
 
-    public PageDTO<ProductPropertyDTO> selectPage(Integer pageNum, Integer pageSize, String name, Byte status) {
+    public PageDTO<ProductPropertyDTO> selectPage(Integer pageNum, Integer pageSize, String name, Byte status, Integer propertyType) {
         Page<ProductProperty> page = new Page<>(pageNum, pageSize);
         LambdaQueryWrapper<ProductProperty> wrapper = new LambdaQueryWrapper<>();
         wrapper.like(name != null && !name.isBlank(), ProductProperty::getName, name);
         wrapper.eq(status != null, ProductProperty::getStatus, status);
+        wrapper.eq(propertyType != null, ProductProperty::getPropertyType, propertyType);
         wrapper.orderByAsc(ProductProperty::getId);
         Page<ProductProperty> result = mapper.selectPage(page, wrapper);
         return PageDTO.of(result.getTotal(), ProductPropertyConvert.INSTANCE.toDTO(result.getRecords()));
     }
 
-    public List<ProductPropertyDTO> selectSimpleList() {
+    public List<ProductPropertyDTO> selectSimpleList(Integer propertyType) {
         LambdaQueryWrapper<ProductProperty> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(ProductProperty::getStatus, ProductConstants.PROPERTY_SIMPLE_ENABLED_STATUS);
+        wrapper.eq(propertyType != null, ProductProperty::getPropertyType, propertyType);
         wrapper.orderByAsc(ProductProperty::getId);
         return ProductPropertyConvert.INSTANCE.toDTO(mapper.selectList(wrapper));
     }
