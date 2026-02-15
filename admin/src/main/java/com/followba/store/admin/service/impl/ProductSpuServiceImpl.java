@@ -20,6 +20,7 @@ import com.followba.store.common.exception.BizException;
 import com.followba.store.common.resp.PageResp;
 import com.followba.store.dao.biz.BizProductCategoryPropertyMapper;
 import com.followba.store.dao.biz.BizProductPropertyMapper;
+import com.followba.store.dao.biz.BizProductPropertyValueMapper;
 import com.followba.store.dao.biz.BizProductSpuMapper;
 import com.followba.store.dao.biz.BizProductSpuPropertyMapper;
 import com.followba.store.dao.dto.ProductCategoryPropertyDTO;
@@ -28,6 +29,7 @@ import com.followba.store.dao.dto.ProductPropertyDTO;
 import com.followba.store.dao.dto.ProductSkuDTO;
 import com.followba.store.dao.dto.ProductSpuDTO;
 import com.followba.store.dao.dto.ProductSpuPropertyDTO;
+import com.followba.store.dao.dto.ProductPropertyValueDTO;
 import com.followba.store.dao.enums.ProductPropertyTypeEnum;
 import com.followba.store.dao.enums.ProductSpuStatusEnum;
 import jakarta.annotation.Resource;
@@ -62,6 +64,9 @@ public class ProductSpuServiceImpl implements ProductSpuService {
 
     @Resource
     private BizProductPropertyMapper bizProductPropertyMapper;
+
+    @Resource
+    private BizProductPropertyValueMapper bizProductPropertyValueMapper;
 
     @Resource
     private BizProductSpuPropertyMapper bizProductSpuPropertyMapper;
@@ -145,7 +150,9 @@ public class ProductSpuServiceImpl implements ProductSpuService {
         }
         ProductSpuRespVO resp = ProductSpuConvert.INSTANCE.toVO(spu);
         Map<Long, List<ProductSkuDTO>> skuMap = productSkuService.getSkuMapBySpuIds(Set.of(spu.getId()));
-        resp.setSkus(ProductSkuConvert.INSTANCE.toVO(skuMap.getOrDefault(spu.getId(), List.of())));
+        List<ProductSkuDTO> skuList = skuMap.getOrDefault(spu.getId(), List.of());
+        fillSkuPropertyValuePicUrls(spu.getCategoryId(), skuList);
+        resp.setSkus(ProductSkuConvert.INSTANCE.toVO(skuList));
         resp.setDisplayProperties(ProductSpuPropertyConvert.INSTANCE.toVO(bizProductSpuPropertyMapper.selectListBySpuId(spu.getId())));
         return resp;
     }
@@ -244,7 +251,9 @@ public class ProductSpuServiceImpl implements ProductSpuService {
                 .collect(Collectors.groupingBy(ProductSpuPropertyDTO::getSpuId));
         return spuList.stream().map(spu -> {
             ProductSpuRespVO resp = toSpuResp(spu);
-            resp.setSkus(ProductSkuConvert.INSTANCE.toVO(skuMap.getOrDefault(spu.getId(), List.of())));
+            List<ProductSkuDTO> skuList = skuMap.getOrDefault(spu.getId(), List.of());
+            fillSkuPropertyValuePicUrls(spu.getCategoryId(), skuList);
+            resp.setSkus(ProductSkuConvert.INSTANCE.toVO(skuList));
             resp.setDisplayProperties(ProductSpuPropertyConvert.INSTANCE.toVO(displayPropertyMap.getOrDefault(spu.getId(), List.of())));
             return resp;
         }).toList();
@@ -339,6 +348,7 @@ public class ProductSpuServiceImpl implements ProductSpuService {
         List<ProductCategoryPropertyDTO> bindList = bizProductCategoryPropertyMapper.selectListByCategoryId(categoryId);
         Set<Long> enabledSalesPropertyIds = new HashSet<>();
         Set<Long> requiredSalesPropertyIds = new HashSet<>();
+        Set<Long> requiredImagePropertyIds = new HashSet<>();
         if (!bindList.isEmpty()) {
             Set<Long> bindPropertyIds = bindList.stream().map(ProductCategoryPropertyDTO::getPropertyId).collect(Collectors.toSet());
             Map<Long, ProductPropertyDTO> bindPropertyMap = bizProductPropertyMapper.selectByIds(bindPropertyIds).stream()
@@ -354,6 +364,9 @@ public class ProductSpuServiceImpl implements ProductSpuService {
                 if (Boolean.TRUE.equals(bind.getEnabled()) && Boolean.TRUE.equals(bind.getRequired())) {
                     requiredSalesPropertyIds.add(bind.getPropertyId());
                 }
+                if (Boolean.TRUE.equals(bind.getEnabled()) && Boolean.TRUE.equals(bind.getValueImageRequired())) {
+                    requiredImagePropertyIds.add(bind.getPropertyId());
+                }
             }
         }
         if (!enabledSalesPropertyIds.containsAll(propertyIds)) {
@@ -362,5 +375,69 @@ public class ProductSpuServiceImpl implements ProductSpuService {
         if (!propertyIds.containsAll(requiredSalesPropertyIds)) {
             throw new BizException(ProductConstants.CATEGORY_PROPERTY_REQUIRED_MISSING);
         }
+        if (!requiredImagePropertyIds.isEmpty()) {
+            validateRequiredValueImages(skus, requiredImagePropertyIds);
+        }
+    }
+
+    private void validateRequiredValueImages(List<ProductSkuSaveIn> skus, Set<Long> requiredImagePropertyIds) {
+        Set<Long> requiredValueIds = skus.stream()
+                .filter(sku -> sku.getProperties() != null)
+                .flatMap(sku -> sku.getProperties().stream())
+                .filter(property -> property.getPropertyId() != null && requiredImagePropertyIds.contains(property.getPropertyId()))
+                .map(ProductSkuSaveIn.Property::getValueId)
+                .filter(valueId -> valueId != null && !valueId.equals(ProductConstants.SKU_DEFAULT_PROPERTY_VALUE_ID))
+                .collect(Collectors.toSet());
+        if (requiredValueIds.isEmpty()) {
+            return;
+        }
+        Map<Long, ProductPropertyValueDTO> valueMap = bizProductPropertyValueMapper.selectByIds(requiredValueIds)
+                .stream()
+                .collect(Collectors.toMap(ProductPropertyValueDTO::getId, Function.identity(), (left, right) -> left));
+        for (Long valueId : requiredValueIds) {
+            ProductPropertyValueDTO value = valueMap.get(valueId);
+            if (value == null || value.getPicUrl() == null || value.getPicUrl().isBlank()) {
+                throw new BizException(ProductConstants.PROPERTY_VALUE_IMAGE_REQUIRED_MISSING);
+            }
+        }
+    }
+
+    private void fillSkuPropertyValuePicUrls(Long categoryId, List<ProductSkuDTO> skuList) {
+        if (skuList == null || skuList.isEmpty()) {
+            return;
+        }
+        skuList.forEach(sku -> {
+            if (sku.getProperties() == null || sku.getProperties().isEmpty()) {
+                return;
+            }
+            sku.getProperties().forEach(property -> property.setValuePicUrl(null));
+        });
+        Set<Long> supportValueImagePropertyIds = bizProductCategoryPropertyMapper.selectListByCategoryId(categoryId)
+                .stream()
+                .filter(item -> Boolean.TRUE.equals(item.getEnabled()) && Boolean.TRUE.equals(item.getSupportValueImage()))
+                .map(ProductCategoryPropertyDTO::getPropertyId)
+                .collect(Collectors.toSet());
+        if (supportValueImagePropertyIds.isEmpty()) {
+            return;
+        }
+        Set<Long> valueIds = skuList.stream()
+                .filter(sku -> sku.getProperties() != null)
+                .flatMap(sku -> sku.getProperties().stream())
+                .filter(property -> property.getPropertyId() != null && supportValueImagePropertyIds.contains(property.getPropertyId()))
+                .map(ProductSkuDTO.Property::getValueId)
+                .filter(valueId -> valueId != null && !valueId.equals(ProductConstants.SKU_DEFAULT_PROPERTY_VALUE_ID))
+                .collect(Collectors.toSet());
+        if (valueIds.isEmpty()) {
+            return;
+        }
+        Map<Long, String> valuePicMap = bizProductPropertyValueMapper.selectByIds(valueIds)
+                .stream()
+                .collect(Collectors.toMap(ProductPropertyValueDTO::getId, ProductPropertyValueDTO::getPicUrl, (left, right) -> left));
+        skuList.forEach(sku -> {
+            if (sku.getProperties() == null || sku.getProperties().isEmpty()) {
+                return;
+            }
+            sku.getProperties().forEach(property -> property.setValuePicUrl(valuePicMap.get(property.getValueId())));
+        });
     }
 }

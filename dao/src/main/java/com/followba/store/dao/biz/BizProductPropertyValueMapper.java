@@ -58,6 +58,15 @@ public class BizProductPropertyValueMapper {
         return ProductPropertyValueConvert.INSTANCE.toDTO(mapper.selectList(wrapper));
     }
 
+    public List<ProductPropertyValueDTO> selectByIds(Collection<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return List.of();
+        }
+        LambdaQueryWrapper<ProductPropertyValue> wrapper = new LambdaQueryWrapper<>();
+        wrapper.in(ProductPropertyValue::getId, ids);
+        return ProductPropertyValueConvert.INSTANCE.toDTO(mapper.selectList(wrapper));
+    }
+
     public PageDTO<ProductPropertyValueDTO> selectPage(Integer pageNum, Integer pageSize, Long propertyId, String name, Byte status) {
         Page<ProductPropertyValue> page = new Page<>(pageNum, pageSize);
         LambdaQueryWrapper<ProductPropertyValue> wrapper = new LambdaQueryWrapper<>();

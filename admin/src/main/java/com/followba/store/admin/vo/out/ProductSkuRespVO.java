@@ -45,5 +45,7 @@ public class ProductSkuRespVO {
         private Long valueId;
 
         private String valueName;
+
+        private String valuePicUrl;
     }
 }

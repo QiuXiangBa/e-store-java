@@ -29,6 +29,18 @@ public class ProductCategoryProperty {
     @TableField(value = "required")
     private Boolean required;
 
+    /**
+     * 是否支持规格值配图 / Whether property values support image configuration.
+     */
+    @TableField(value = "support_value_image")
+    private Boolean supportValueImage;
+
+    /**
+     * 规格值图片是否必填 / Whether value image is required.
+     */
+    @TableField(value = "value_image_required")
+    private Boolean valueImageRequired;
+
     @TableField(value = "sort")
     private Integer sort;
 

@@ -15,10 +15,11 @@
     <result column="deleted" jdbcType="BOOLEAN" property="deleted" />
     <result column="tenant_id" jdbcType="BIGINT" property="tenantId" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="pic_url" jdbcType="VARCHAR" property="picUrl" />
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, property_id, `name`, `status`, creator, create_time, updater, update_time, deleted, 
-    tenant_id, remark
+    id, property_id, `name`, `status`, creator, create_time, updater, update_time, deleted,
+    tenant_id, remark, pic_url
   </sql>
 </mapper>

@@ -28,4 +28,6 @@ public class ProductPropertyValueDTO {
     private Long tenantId;
 
     private String remark;
+
+    private String picUrl;
 }

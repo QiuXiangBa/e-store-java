@@ -35,6 +35,7 @@ public enum ProductConstants implements ErrorCode {
     DISPLAY_PROPERTY_REQUIRED_MISSING(61213, "缺少类目必填展示属性"),
     DISPLAY_PROPERTY_ID_DUPLICATE(61214, "展示属性存在重复属性ID"),
     CATEGORY_PROPERTY_BATCH_SIZE_EXCEED(61215, "类目属性绑定数量超限"),
+    PROPERTY_VALUE_IMAGE_REQUIRED_MISSING(61216, "缺少类目要求的销售属性值图片"),
 
     SKU_NOT_EXISTS(61301, "商品 SKU 不存在"),
     SKU_PROPERTIES_DUPLICATED(61302, "SKU 属性重复"),

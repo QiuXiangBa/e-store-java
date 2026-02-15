@@ -7,6 +7,8 @@
     <result column="property_id" jdbcType="BIGINT" property="propertyId" />
     <result column="enabled" jdbcType="BOOLEAN" property="enabled" />
     <result column="required" jdbcType="BOOLEAN" property="required" />
+    <result column="support_value_image" jdbcType="BOOLEAN" property="supportValueImage" />
+    <result column="value_image_required" jdbcType="BOOLEAN" property="valueImageRequired" />
     <result column="sort" jdbcType="INTEGER" property="sort" />
     <result column="creator" jdbcType="VARCHAR" property="creator" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -18,10 +20,10 @@
 
   <insert id="insertBatch">
     insert into product_category_property
-    (category_id, property_id, enabled, `required`, sort)
+    (category_id, property_id, enabled, `required`, support_value_image, value_image_required, sort)
     values
     <foreach collection="list" item="item" separator=",">
-      (#{item.categoryId}, #{item.propertyId}, #{item.enabled}, #{item.required}, #{item.sort})
+      (#{item.categoryId}, #{item.propertyId}, #{item.enabled}, #{item.required}, #{item.supportValueImage}, #{item.valueImageRequired}, #{item.sort})
     </foreach>
   </insert>
 </mapper>

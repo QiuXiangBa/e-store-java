@@ -11,6 +11,7 @@ import com.followba.store.dao.biz.BizProductPropertyMapper;
 import com.followba.store.dao.constant.ProductConstants;
 import com.followba.store.dao.dto.ProductCategoryPropertyDTO;
 import com.followba.store.dao.dto.ProductPropertyDTO;
+import com.followba.store.dao.enums.ProductPropertyTypeEnum;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,6 +55,21 @@ public class ProductCategoryPropertyServiceImpl implements ProductCategoryProper
         List<ProductPropertyDTO> propertyList = bizProductPropertyMapper.selectByIds(propertyIds);
         if (propertyList.size() != propertyIds.size()) {
             throw new BizException(ProductConstants.PROPERTY_NOT_EXISTS);
+        }
+        Map<Long, ProductPropertyDTO> propertyMap = propertyList.stream()
+                .collect(Collectors.toMap(ProductPropertyDTO::getId, Function.identity(), (left, right) -> left));
+        for (ProductCategoryPropertySaveIn.Item item : reqVO.getItems()) {
+            ProductPropertyDTO property = propertyMap.get(item.getPropertyId());
+            if (property == null || property.getPropertyType() == null) {
+                continue;
+            }
+            if (ProductPropertyTypeEnum.SALES.getCode() != property.getPropertyType()
+                    && (Boolean.TRUE.equals(item.getSupportValueImage()) || Boolean.TRUE.equals(item.getValueImageRequired()))) {
+                throw new BizException(ProductConstants.PROPERTY_TYPE_INVALID, "仅销售属性支持规格值配图设置");
+            }
+            if (Boolean.TRUE.equals(item.getValueImageRequired()) && !Boolean.TRUE.equals(item.getSupportValueImage())) {
+                throw new BizException(ProductConstants.PROPERTY_TYPE_INVALID, "规格值图片必填依赖开启规格值配图");
+            }
         }
 
         List<ProductCategoryPropertyDTO> dtoList = ProductCategoryPropertyConvert.INSTANCE.toDTO(reqVO.getItems());

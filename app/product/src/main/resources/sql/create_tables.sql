@@ -128,6 +128,7 @@ CREATE TABLE `product_property_value` (
                                           `deleted` tinyint(1) NOT NULL DEFAULT '0',
                                           `tenant_id` bigint NOT NULL DEFAULT '0',
                                           `remark` varchar(255) DEFAULT NULL COMMENT '备注',
+                                          `pic_url` varchar(512) DEFAULT NULL COMMENT '规格值图片 URL',
                                           PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='规格值';
 
@@ -141,6 +142,8 @@ CREATE TABLE `product_category_property` (
                                              `property_id` bigint NOT NULL COMMENT '属性编号',
                                              `enabled` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否启用',
                                              `required` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否必填',
+                                             `support_value_image` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否支持规格值配图',
+                                             `value_image_required` tinyint(1) NOT NULL DEFAULT '0' COMMENT '规格值图片是否必填',
                                              `sort` int NOT NULL DEFAULT '0' COMMENT '排序',
                                              `creator` varchar(64) DEFAULT '',
                                              `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,

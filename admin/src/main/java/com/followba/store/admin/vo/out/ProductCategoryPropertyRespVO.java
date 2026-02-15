@@ -19,5 +19,9 @@ public class ProductCategoryPropertyRespVO {
 
     private Boolean required;
 
+    private Boolean supportValueImage;
+
+    private Boolean valueImageRequired;
+
     private Integer sort;
 }

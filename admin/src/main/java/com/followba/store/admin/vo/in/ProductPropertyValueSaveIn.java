@@ -19,4 +19,6 @@ public class ProductPropertyValueSaveIn {
     private Byte status;
 
     private String remark;
+
+    private String picUrl;
 }

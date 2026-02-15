@@ -23,7 +23,6 @@ public class ProductSkuSaveIn {
 
     private String barCode;
 
-    @NotNull(message = "图片不能为空")
     private String picUrl;
 
     @NotNull(message = "库存不能为空")
@@ -47,5 +46,7 @@ public class ProductSkuSaveIn {
         private Long valueId;
 
         private String valueName;
+
+        private String valuePicUrl;
     }
 }

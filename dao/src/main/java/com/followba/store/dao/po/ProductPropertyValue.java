@@ -60,4 +60,10 @@ public class ProductPropertyValue {
      */
     @TableField(value = "remark")
     private String remark;
+
+    /**
+     * 规格值图片 URL / Property value image URL.
+     */
+    @TableField(value = "pic_url")
+    private String picUrl;
 }

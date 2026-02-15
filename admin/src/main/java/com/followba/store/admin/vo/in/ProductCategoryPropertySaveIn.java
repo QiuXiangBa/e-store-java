@@ -29,6 +29,12 @@ public class ProductCategoryPropertySaveIn {
         @NotNull(message = "必填状态不能为空")
         private Boolean required;
 
+        @NotNull(message = "规格值配图支持状态不能为空")
+        private Boolean supportValueImage;
+
+        @NotNull(message = "规格值图片必填状态不能为空")
+        private Boolean valueImageRequired;
+
         @NotNull(message = "排序不能为空")
         private Integer sort;
     }

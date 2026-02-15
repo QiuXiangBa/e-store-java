@@ -124,5 +124,7 @@ public class ProductSku {
         private Long valueId;
 
         private String valueName;
+
+        private String valuePicUrl;
     }
 }

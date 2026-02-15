@@ -16,6 +16,10 @@ public class ProductCategoryPropertyDTO {
 
     private Boolean required;
 
+    private Boolean supportValueImage;
+
+    private Boolean valueImageRequired;
+
     private Integer sort;
 
     private String creator;
