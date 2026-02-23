@@ -204,10 +204,7 @@ public class ProductSpuServiceImpl implements ProductSpuService {
     }
 
     private void validateSpuRefs(ProductSpuSaveIn reqVO) {
-        productCategoryService.validateCategory(reqVO.getCategoryId());
-        if (productCategoryService.getCategoryLevel(reqVO.getCategoryId()) < ProductConstants.CATEGORY_MIN_LEVEL) {
-            throw new BizException(ProductConstants.CATEGORY_LEVEL_ERROR);
-        }
+        productCategoryService.validatePublishCategory(reqVO.getCategoryId());
         productBrandService.validateProductBrand(reqVO.getBrandId());
     }
 

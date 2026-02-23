@@ -72,9 +72,9 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
     @Override
     public List<ProductCategoryRespVO> getCategoryList(ProductCategoryListIn reqVO) {
-        return ProductCategoryConvert.INSTANCE.toVO(
-                bizProductCategoryMapper.selectList(reqVO.getName(), reqVO.getStatus(), reqVO.getParentId())
-        );
+        List<ProductCategoryDTO> categoryList = bizProductCategoryMapper.selectList(reqVO.getName(), reqVO.getStatus(), reqVO.getParentId());
+        fillLeafFlag(categoryList);
+        return ProductCategoryConvert.INSTANCE.toVO(categoryList);
     }
 
     @Override
@@ -89,21 +89,11 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     }
 
     @Override
-    public int getCategoryLevel(Long id) {
-        if (id == null || ROOT_PARENT_ID.equals(id)) {
-            return ProductConstants.DEFAULT_ZERO;
+    public void validatePublishCategory(Long id) {
+        validateCategory(id);
+        if (bizProductCategoryMapper.countByParentId(id) > ProductConstants.DEFAULT_ZERO) {
+            throw new BizException(ProductConstants.CATEGORY_NOT_LEAF);
         }
-        int level = 1;
-        Long currentId = id;
-        for (int i = 0; i < Byte.MAX_VALUE; i++) {
-            ProductCategoryDTO category = bizProductCategoryMapper.selectById(currentId);
-            if (category == null || ROOT_PARENT_ID.equals(category.getParentId())) {
-                break;
-            }
-            level++;
-            currentId = category.getParentId();
-        }
-        return level;
     }
 
     @Override
@@ -158,5 +148,14 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
                 throw new BizException(ProductConstants.CATEGORY_SORT_ID_DUPLICATE);
             }
         }
+    }
+
+    private void fillLeafFlag(List<ProductCategoryDTO> categoryList) {
+        if (categoryList == null || categoryList.isEmpty()) {
+            return;
+        }
+        Set<Long> idSet = categoryList.stream().map(ProductCategoryDTO::getId).collect(Collectors.toSet());
+        Set<Long> parentIds = bizProductCategoryMapper.selectParentIdsThatHaveChildren(idSet);
+        categoryList.forEach(category -> category.setIsLeaf(!parentIds.contains(category.getId())));
     }
 }

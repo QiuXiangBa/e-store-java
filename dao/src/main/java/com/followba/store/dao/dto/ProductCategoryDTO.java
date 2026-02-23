@@ -21,6 +21,8 @@ public class ProductCategoryDTO {
 
     private Integer status;
 
+    private Boolean isLeaf;
+
     private String creator;
 
     private Date createTime;

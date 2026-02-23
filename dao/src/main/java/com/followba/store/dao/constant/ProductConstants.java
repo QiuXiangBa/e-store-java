@@ -19,6 +19,7 @@ public enum ProductConstants implements ErrorCode {
     CATEGORY_SORT_BATCH_SIZE_EXCEED(61109, "批量排序数量超限"),
     CATEGORY_SORT_ID_DUPLICATE(61110, "批量排序存在重复分类ID"),
     CATEGORY_SORT_INVALID(61111, "分类排序参数不合法"),
+    CATEGORY_NOT_LEAF(61112, "所选类目不是可发布叶子类目"),
 
     PROPERTY_NOT_EXISTS(61201, "规格属性不存在"),
     PROPERTY_VALUE_NOT_EXISTS(61202, "规格值不存在"),
