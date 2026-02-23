@@ -28,6 +28,8 @@ public class ProductSpuRespVO {
 
     private List<String> sliderPicUrls;
 
+    private List<String> materialPicUrls;
+
     private String videoUrl;
 
     private Integer sort;

@@ -198,6 +198,7 @@ CREATE TABLE `product_spu` (
                                `brand_id` int DEFAULT NULL COMMENT '商品品牌编号',
                                `pic_url` varchar(256) NOT NULL COMMENT '商品封面图',
                                `slider_pic_urls` varchar(2000) DEFAULT '' COMMENT '商品轮播图地址\n 数组，以逗号分隔\n 最多上传15张',
+                               `material_pic_urls` varchar(2000) DEFAULT '' COMMENT '3:4 主图素材地址数组(JSON)',
                                `video_url` varchar(256) DEFAULT NULL COMMENT '商品视频',
                                `sort` int NOT NULL DEFAULT '0' COMMENT '排序字段',
                                `status` int NOT NULL COMMENT '商品状态: 0 上架（开启） 1 下架（禁用）-1 回收',

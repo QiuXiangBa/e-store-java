@@ -78,6 +78,13 @@ public class ProductSpu {
     private List<String> sliderPicUrls;
 
     /**
+     * 3:4 主图素材地址数组
+     * 3:4 material image urls
+     */
+    @TableField(value = "material_pic_urls", typeHandler = JacksonTypeHandler.class)
+    private List<String> materialPicUrls;
+
+    /**
      * 商品视频
      */
     @TableField(value = "video_url")
