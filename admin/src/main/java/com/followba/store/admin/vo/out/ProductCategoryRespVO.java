@@ -21,5 +21,7 @@ public class ProductCategoryRespVO {
 
     private Integer status;
 
+    private Boolean isLeaf;
+
     private Date createTime;
 }

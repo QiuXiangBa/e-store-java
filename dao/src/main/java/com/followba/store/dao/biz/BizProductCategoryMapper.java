@@ -50,6 +50,17 @@ public class BizProductCategoryMapper {
         return mapper.selectCount(wrapper);
     }
 
+    public Set<Long> selectParentIdsThatHaveChildren(Set<Long> parentIds) {
+        if (parentIds == null || parentIds.isEmpty()) {
+            return Set.of();
+        }
+        LambdaQueryWrapper<ProductCategory> wrapper = new LambdaQueryWrapper<>();
+        wrapper.in(ProductCategory::getParentId, parentIds);
+        return mapper.selectList(wrapper).stream()
+                .map(ProductCategory::getParentId)
+                .collect(Collectors.toSet());
+    }
+
     public List<ProductCategoryDTO> selectList(String name, Byte status, Long parentId) {
         LambdaQueryWrapper<ProductCategory> wrapper = new LambdaQueryWrapper<>();
         wrapper.like(name != null && !name.isBlank(), ProductCategory::getName, name);

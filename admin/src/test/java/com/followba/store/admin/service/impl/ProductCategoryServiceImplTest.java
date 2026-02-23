@@ -1,10 +1,12 @@
 package com.followba.store.admin.service.impl;
 
 import com.followba.store.common.exception.BizException;
+import com.followba.store.admin.vo.in.ProductCategoryListIn;
 import com.followba.store.dao.biz.BizProductCategoryMapper;
 import com.followba.store.dao.biz.BizProductSpuMapper;
 import com.followba.store.dao.constant.ProductConstants;
 import com.followba.store.dao.dto.ProductCategoryDTO;
+import com.followba.store.dao.enums.StatusEnums;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,9 +15,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -87,6 +92,45 @@ class ProductCategoryServiceImplTest {
         service.updateCategorySortBatch(items);
 
         verify(bizProductCategoryMapper).updateSortBatch(items);
+    }
+
+    @Test
+    void validatePublishCategory_shouldThrowWhenHasChildren() {
+        ProductCategoryDTO category = new ProductCategoryDTO();
+        category.setId(1L);
+        category.setStatus(StatusEnums.OPEN.getCode());
+        when(bizProductCategoryMapper.selectById(1L)).thenReturn(category);
+        when(bizProductCategoryMapper.countByParentId(1L)).thenReturn(1L);
+
+        BizException ex = assertThrows(BizException.class, () -> service.validatePublishCategory(1L));
+        assertEquals(ProductConstants.CATEGORY_NOT_LEAF.code(), ex.getCode());
+    }
+
+    @Test
+    void validatePublishCategory_shouldSuccessWhenLeaf() {
+        ProductCategoryDTO category = new ProductCategoryDTO();
+        category.setId(1L);
+        category.setStatus(StatusEnums.OPEN.getCode());
+        when(bizProductCategoryMapper.selectById(1L)).thenReturn(category);
+        when(bizProductCategoryMapper.countByParentId(1L)).thenReturn(0L);
+
+        service.validatePublishCategory(1L);
+
+        verify(bizProductCategoryMapper).countByParentId(1L);
+    }
+
+    @Test
+    void getCategoryList_shouldFillLeafFlag() {
+        ProductCategoryDTO parent = createItem(10L, 10);
+        ProductCategoryDTO leaf = createItem(11L, 20);
+        when(bizProductCategoryMapper.selectList(null, null, null)).thenReturn(List.of(parent, leaf));
+        when(bizProductCategoryMapper.selectParentIdsThatHaveChildren(Set.of(10L, 11L))).thenReturn(Set.of(10L));
+
+        var list = service.getCategoryList(new ProductCategoryListIn());
+
+        assertEquals(2, list.size());
+        assertFalse(Boolean.TRUE.equals(list.stream().filter(item -> item.getId().equals(10L)).findFirst().orElseThrow().getIsLeaf()));
+        assertTrue(Boolean.TRUE.equals(list.stream().filter(item -> item.getId().equals(11L)).findFirst().orElseThrow().getIsLeaf()));
     }
 
     private ProductCategoryDTO createItem(Long id, Integer sort) {

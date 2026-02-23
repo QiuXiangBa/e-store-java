@@ -38,6 +38,8 @@ public class ProductSpuSaveIn {
 
     private List<String> sliderPicUrls;
 
+    private List<String> materialPicUrls;
+
     private String videoUrl;
 
     @NotNull(message = "排序不能为空")

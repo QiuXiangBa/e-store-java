@@ -21,7 +21,7 @@ public interface ProductCategoryService {
 
     void validateCategory(Long id);
 
-    int getCategoryLevel(Long id);
+    void validatePublishCategory(Long id);
 
     void updateCategorySortBatch(List<ProductCategoryDTO> items);
 }
