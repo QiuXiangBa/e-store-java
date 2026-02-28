@@ -29,6 +29,13 @@ public class BizProductSkuMapper {
         return ProductSkuConvert.INSTANCE.toDTO(mapper.selectById(id));
     }
 
+    public List<ProductSkuDTO> selectListByIds(Set<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return List.of();
+        }
+        return ProductSkuConvert.INSTANCE.toDTO(mapper.selectBatchIds(ids));
+    }
+
     public List<ProductSkuDTO> selectList() {
         return ProductSkuConvert.INSTANCE.toDTO(mapper.selectList(new LambdaQueryWrapper<>()));
     }
