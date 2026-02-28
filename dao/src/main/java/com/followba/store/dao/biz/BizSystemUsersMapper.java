@@ -27,6 +27,22 @@ public class BizSystemUsersMapper {
         return SystemUsersConvert.INSTANCE.toDTO(mapper.selectOne(wrapper));
     }
 
+    public SystemUsersDTO selectByMobile(String mobile) {
+        LambdaQueryWrapper<SystemUsers> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(SystemUsers::getMobile, mobile)
+                .eq(SystemUsers::getDeleted, AuthConstants.DEFAULT_NOT_DELETED)
+                .last("LIMIT 1");
+        return SystemUsersConvert.INSTANCE.toDTO(mapper.selectOne(wrapper));
+    }
+
+    public SystemUsersDTO selectByEmail(String email) {
+        LambdaQueryWrapper<SystemUsers> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(SystemUsers::getEmail, email)
+                .eq(SystemUsers::getDeleted, AuthConstants.DEFAULT_NOT_DELETED)
+                .last("LIMIT 1");
+        return SystemUsersConvert.INSTANCE.toDTO(mapper.selectOne(wrapper));
+    }
+
     public void updateById(SystemUsersDTO dto) {
         mapper.updateById(SystemUsersConvert.INSTANCE.toPO(dto));
     }

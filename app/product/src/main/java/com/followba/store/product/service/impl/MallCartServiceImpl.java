@@ -13,6 +13,7 @@ import com.followba.store.dao.enums.ProductSpuStatusEnum;
 import com.followba.store.dao.enums.TradeCartSelectedEnum;
 import com.followba.store.product.dto.CartAddDTO;
 import com.followba.store.product.dto.CartItemDTO;
+import com.followba.store.product.dto.CartMergeItemDTO;
 import com.followba.store.product.dto.CartUpdateQuantityDTO;
 import com.followba.store.product.dto.CartUpdateSelectedDTO;
 import com.followba.store.product.service.MallCartService;
@@ -21,7 +22,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 public class MallCartServiceImpl implements MallCartService {
@@ -119,6 +124,77 @@ public class MallCartServiceImpl implements MallCartService {
         bizTradeCartMapper.deleteById(cartDTO.getId());
     }
 
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void mergeGuestItems(Long userId, List<CartMergeItemDTO> itemDTOList) {
+        Long targetUserId = userId == null ? getCurrentUserId() : userId;
+        if (itemDTOList == null || itemDTOList.isEmpty()) {
+            return;
+        }
+
+        Map<Long, Integer> mergedQuantityMap = buildMergedQuantityMap(itemDTOList);
+        if (mergedQuantityMap.isEmpty()) {
+            return;
+        }
+
+        Set<Long> skuIds = mergedQuantityMap.keySet();
+        Map<Long, ProductSkuDTO> skuMap = bizProductSkuMapper.selectListByIds(skuIds).stream()
+                .collect(Collectors.toMap(ProductSkuDTO::getId, Function.identity(), (a, b) -> a));
+        if (skuMap.isEmpty()) {
+            return;
+        }
+
+        Set<Long> spuIds = skuMap.values().stream().map(ProductSkuDTO::getSpuId).collect(Collectors.toSet());
+        Map<Long, ProductSpuDTO> spuMap = bizProductSpuMapper.selectBatchIds(spuIds).stream()
+                .collect(Collectors.toMap(ProductSpuDTO::getId, Function.identity(), (a, b) -> a));
+
+        Map<Long, TradeCartDTO> existingCartMap = bizTradeCartMapper.selectListByUserIdAndSkuIds(targetUserId, skuIds).stream()
+                .collect(Collectors.toMap(TradeCartDTO::getSkuId, Function.identity(), (a, b) -> a));
+
+        List<TradeCartDTO> insertDTOList = new java.util.ArrayList<>();
+        List<TradeCartDTO> updateDTOList = new java.util.ArrayList<>();
+        for (Map.Entry<Long, Integer> entry : mergedQuantityMap.entrySet()) {
+            Long skuId = entry.getKey();
+            ProductSkuDTO skuDTO = skuMap.get(skuId);
+            if (skuDTO == null || skuDTO.getStock() == null || skuDTO.getStock() <= ProductConstants.DEFAULT_ZERO) {
+                continue;
+            }
+            ProductSpuDTO spuDTO = spuMap.get(skuDTO.getSpuId());
+            if (spuDTO == null || !Objects.equals(spuDTO.getStatus(), ProductSpuStatusEnum.ENABLE.getCode())) {
+                continue;
+            }
+            int quantity = Math.min(skuDTO.getStock(), entry.getValue());
+            if (quantity < ProductConstants.CART_MIN_QUANTITY) {
+                continue;
+            }
+            TradeCartDTO exists = existingCartMap.get(skuId);
+            if (exists == null) {
+                TradeCartDTO insertDTO = new TradeCartDTO();
+                insertDTO.setUserId(targetUserId);
+                insertDTO.setSpuId(spuDTO.getId());
+                insertDTO.setSkuId(skuDTO.getId());
+                insertDTO.setQuantity(quantity);
+                insertDTO.setSelected(TradeCartSelectedEnum.SELECTED.getCode());
+                insertDTO.setSkuPrice(skuDTO.getPrice());
+                insertDTO.setSpuName(spuDTO.getName());
+                insertDTO.setSkuPicUrl(skuDTO.getPicUrl());
+                insertDTO.setSkuProperties(buildSkuPropertiesText(skuDTO));
+                updateSnapshotFields(insertDTO, spuDTO, skuDTO);
+                insertDTOList.add(insertDTO);
+                continue;
+            }
+            int mergedQuantity = Math.min(skuDTO.getStock(), exists.getQuantity() + quantity);
+            TradeCartDTO updateDTO = new TradeCartDTO();
+            updateDTO.setId(exists.getId());
+            updateDTO.setQuantity(mergedQuantity);
+            updateDTO.setSelected(TradeCartSelectedEnum.SELECTED.getCode());
+            updateSnapshotFields(updateDTO, spuDTO, skuDTO);
+            updateDTOList.add(updateDTO);
+        }
+        bizTradeCartMapper.insertBatch(insertDTOList);
+        bizTradeCartMapper.updateBatch(updateDTOList);
+    }
+
     private CartItemDTO toCartItemDTO(TradeCartDTO dto) {
         CartItemDTO out = new CartItemDTO();
         out.setCartId(dto.getId());
@@ -188,6 +264,27 @@ public class MallCartServiceImpl implements MallCartService {
                 .filter(Objects::nonNull)
                 .reduce((a, b) -> a + "/" + b)
                 .orElse("");
+    }
+
+    private Map<Long, Integer> buildMergedQuantityMap(List<CartMergeItemDTO> itemDTOList) {
+        Map<Long, Integer> mergedQuantityMap = new java.util.HashMap<>();
+        for (CartMergeItemDTO itemDTO : itemDTOList) {
+            if (itemDTO == null || itemDTO.getSkuId() == null || itemDTO.getQuantity() == null) {
+                continue;
+            }
+            if (itemDTO.getQuantity() < ProductConstants.CART_MIN_QUANTITY) {
+                throw new BizException(ProductConstants.CART_QUANTITY_INVALID);
+            }
+            mergedQuantityMap.merge(itemDTO.getSkuId(), itemDTO.getQuantity(), Integer::sum);
+        }
+        return mergedQuantityMap;
+    }
+
+    private void updateSnapshotFields(TradeCartDTO target, ProductSpuDTO spuDTO, ProductSkuDTO skuDTO) {
+        target.setSkuPrice(skuDTO.getPrice());
+        target.setSpuName(spuDTO.getName());
+        target.setSkuPicUrl(skuDTO.getPicUrl());
+        target.setSkuProperties(buildSkuPropertiesText(skuDTO));
     }
 
     private Long getCurrentUserId() {
