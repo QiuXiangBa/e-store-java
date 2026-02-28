@@ -49,7 +49,29 @@ public enum ProductConstants implements ErrorCode {
     SPU_NOT_RECYCLE(61403, "商品不在回收站，不能删除"),
     SPU_STATUS_INVALID(61404, "商品状态不合法"),
 
-    COMMENT_NOT_EXISTS(61501, "商品评论不存在");
+    COMMENT_NOT_EXISTS(61501, "商品评论不存在"),
+
+    CART_USER_NOT_LOGIN(61601, "用户未登录"),
+    CART_SKU_NOT_EXISTS(61602, "购物车商品不存在"),
+    CART_SKU_NOT_SALE(61603, "商品不可售"),
+    CART_QUANTITY_INVALID(61604, "购物车数量不合法"),
+    CART_ITEM_NOT_EXISTS(61605, "购物车项不存在"),
+    CART_ITEM_NOT_BELONG_USER(61606, "购物车项不属于当前用户"),
+    CART_SKU_STOCK_NOT_ENOUGH(61607, "商品库存不足"),
+
+    CHECKOUT_EMPTY_SELECTION(61701, "请先勾选结算商品"),
+    CHECKOUT_SKU_PRICE_CHANGED(61702, "商品价格已变化，请刷新后重试"),
+    CHECKOUT_SKU_STOCK_NOT_ENOUGH(61703, "结算商品库存不足"),
+    CHECKOUT_ORDER_NOT_EXISTS(61704, "结算单不存在"),
+
+    ORDER_REQUEST_ID_REQUIRED(61801, "下单请求标识不能为空"),
+    ORDER_NOT_EXISTS(61802, "订单不存在"),
+    ORDER_NOT_BELONG_USER(61803, "订单不属于当前用户"),
+    ORDER_STATUS_INVALID(61804, "订单状态不合法"),
+    ORDER_CANCEL_STATUS_INVALID(61805, "当前订单状态不支持取消"),
+    ORDER_PAY_STATUS_INVALID(61806, "当前订单状态不支持支付回写"),
+    ORDER_CHECKOUT_ITEM_EMPTY(61807, "结算单明细为空"),
+    ORDER_CHECKOUT_USER_MISMATCH(61808, "结算单不属于当前用户");
 
     private final int code;
     private final String msg;
@@ -102,4 +124,14 @@ public enum ProductConstants implements ErrorCode {
     public static final String SKU_DEFAULT_PROPERTY_VALUE_NAME = "默认";
 
     public static final int PRODUCT_PROPERTY_DEFAULT_INPUT_TYPE = 1;
+
+    public static final int CART_MIN_QUANTITY = 1;
+
+    public static final int CART_DEFAULT_PAGE_SIZE = 20;
+
+    public static final int CART_DEFAULT_PAGE_NUM = 1;
+
+    public static final String CHECKOUT_ORDER_NO_PREFIX = "CK";
+
+    public static final String ORDER_NO_PREFIX = "OD";
 }

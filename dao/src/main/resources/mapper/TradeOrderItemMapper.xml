@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.followba.store.dao.mapper.TradeOrderItemMapper">
+
+    <insert id="batchInsert">
+        insert into trade_order_item
+        (order_id, user_id, spu_id, sku_id, spu_name, sku_pic_url, sku_properties, price, quantity, line_amount)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (#{item.orderId}, #{item.userId}, #{item.spuId}, #{item.skuId}, #{item.spuName}, #{item.skuPicUrl},
+             #{item.skuProperties}, #{item.price}, #{item.quantity}, #{item.lineAmount})
+        </foreach>
+    </insert>
+
+</mapper>
