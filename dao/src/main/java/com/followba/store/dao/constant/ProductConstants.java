@@ -62,7 +62,16 @@ public enum ProductConstants implements ErrorCode {
     CHECKOUT_EMPTY_SELECTION(61701, "请先勾选结算商品"),
     CHECKOUT_SKU_PRICE_CHANGED(61702, "商品价格已变化，请刷新后重试"),
     CHECKOUT_SKU_STOCK_NOT_ENOUGH(61703, "结算商品库存不足"),
-    CHECKOUT_ORDER_NOT_EXISTS(61704, "结算单不存在");
+    CHECKOUT_ORDER_NOT_EXISTS(61704, "结算单不存在"),
+
+    ORDER_REQUEST_ID_REQUIRED(61801, "下单请求标识不能为空"),
+    ORDER_NOT_EXISTS(61802, "订单不存在"),
+    ORDER_NOT_BELONG_USER(61803, "订单不属于当前用户"),
+    ORDER_STATUS_INVALID(61804, "订单状态不合法"),
+    ORDER_CANCEL_STATUS_INVALID(61805, "当前订单状态不支持取消"),
+    ORDER_PAY_STATUS_INVALID(61806, "当前订单状态不支持支付回写"),
+    ORDER_CHECKOUT_ITEM_EMPTY(61807, "结算单明细为空"),
+    ORDER_CHECKOUT_USER_MISMATCH(61808, "结算单不属于当前用户");
 
     private final int code;
     private final String msg;
@@ -123,4 +132,6 @@ public enum ProductConstants implements ErrorCode {
     public static final int CART_DEFAULT_PAGE_NUM = 1;
 
     public static final String CHECKOUT_ORDER_NO_PREFIX = "CK";
+
+    public static final String ORDER_NO_PREFIX = "OD";
 }

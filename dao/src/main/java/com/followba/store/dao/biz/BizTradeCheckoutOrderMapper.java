@@ -1,5 +1,6 @@
 package com.followba.store.dao.biz;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.followba.store.dao.convert.TradeCheckoutOrderConvert;
 import com.followba.store.dao.dto.TradeCheckoutOrderDTO;
 import com.followba.store.dao.mapper.TradeCheckoutOrderMapper;
@@ -21,5 +22,13 @@ public class BizTradeCheckoutOrderMapper {
 
     public TradeCheckoutOrderDTO selectById(Long id) {
         return TradeCheckoutOrderConvert.INSTANCE.toDTO(mapper.selectById(id));
+    }
+
+    public TradeCheckoutOrderDTO selectLatestByUserId(Long userId) {
+        LambdaQueryWrapper<TradeCheckoutOrder> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(TradeCheckoutOrder::getUserId, userId);
+        wrapper.orderByDesc(TradeCheckoutOrder::getId);
+        wrapper.last("limit 1");
+        return TradeCheckoutOrderConvert.INSTANCE.toDTO(mapper.selectOne(wrapper));
     }
 }

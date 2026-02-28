@@ -2,6 +2,7 @@ package com.followba.store.product.enums;
 
 import com.followba.store.dao.enums.TradeCartSelectedEnum;
 import com.followba.store.dao.enums.TradeCheckoutOrderStatusEnum;
+import com.followba.store.dao.enums.TradeOrderStatusEnum;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -26,5 +27,16 @@ class TradeEnumsTest {
     @Test
     void contains_shouldReturnFalse_whenCheckoutStatusCodeNotExists() {
         Assertions.assertFalse(TradeCheckoutOrderStatusEnum.contains(9));
+    }
+
+    @Test
+    void contains_shouldReturnTrue_whenOrderStatusCodeExists() {
+        Assertions.assertTrue(TradeOrderStatusEnum.contains(0));
+        Assertions.assertTrue(TradeOrderStatusEnum.contains(10));
+    }
+
+    @Test
+    void contains_shouldReturnFalse_whenOrderStatusCodeNotExists() {
+        Assertions.assertFalse(TradeOrderStatusEnum.contains(11));
     }
 }

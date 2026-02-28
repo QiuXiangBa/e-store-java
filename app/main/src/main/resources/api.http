@@ -7,3 +7,47 @@ Authorization: 1
 {
   "word": "excuse"
 }
+
+### mall order - create
+POST {{host}}/mall/order/create
+Content-Type: application/json
+Authorization: 1
+
+{
+  "checkoutOrderId": 1,
+  "remark": "test order",
+  "requestId": "req-20260228-0001"
+}
+
+### mall order - page
+GET {{host}}/mall/order/page?pageNum=1&pageSize=10
+Authorization: 1
+
+### mall order - detail
+GET {{host}}/mall/order/detail?id=1
+Authorization: 1
+
+### mall order - status
+GET {{host}}/mall/order/status?id=1
+Authorization: 1
+
+### mall order - cancel
+POST {{host}}/mall/order/cancel
+Content-Type: application/json
+Authorization: 1
+
+{
+  "orderId": 1,
+  "reason": "user cancel"
+}
+
+### mall order - pay success
+POST {{host}}/mall/order/pay-success
+Content-Type: application/json
+Authorization: 1
+
+{
+  "orderNo": "OD123456789",
+  "payTxnNo": "PAY_001",
+  "paidAmount": 1000
+}
