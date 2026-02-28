@@ -7,3 +7,68 @@ Authorization: 1
 {
   "word": "excuse"
 }
+
+###
+### mall product - page
+GET {{host}}/mall/product/page?pageNum=1&pageSize=20
+Content-Type: application/json
+
+###
+### mall product - detail
+GET {{host}}/mall/product/detail?spuId=1
+Content-Type: application/json
+
+###
+### mall cart - add
+POST {{host}}/mall/cart/add
+Content-Type: application/json
+Authorization: 1001
+
+{
+  "skuId": 1,
+  "quantity": 2
+}
+
+###
+### mall cart - list
+GET {{host}}/mall/cart/list
+Content-Type: application/json
+Authorization: 1001
+
+###
+### mall cart - update quantity
+PUT {{host}}/mall/cart/update-quantity
+Content-Type: application/json
+Authorization: 1001
+
+{
+  "cartId": 1,
+  "quantity": 3
+}
+
+###
+### mall cart - update selected
+PUT {{host}}/mall/cart/update-selected
+Content-Type: application/json
+Authorization: 1001
+
+{
+  "cartId": 1,
+  "selected": true
+}
+
+###
+### mall cart - delete
+DELETE {{host}}/mall/cart/delete?cartId=1
+Content-Type: application/json
+Authorization: 1001
+
+###
+### mall checkout - create
+POST {{host}}/mall/checkout/create
+Content-Type: application/json
+Authorization: 1001
+
+{
+  "remark": "manual test"
+}
