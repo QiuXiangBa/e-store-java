@@ -2,6 +2,7 @@ package com.followba.store.product.service;
 
 import com.followba.store.product.dto.CartAddDTO;
 import com.followba.store.product.dto.CartItemDTO;
+import com.followba.store.product.dto.CartMergeItemDTO;
 import com.followba.store.product.dto.CartUpdateQuantityDTO;
 import com.followba.store.product.dto.CartUpdateSelectedDTO;
 
@@ -18,4 +19,6 @@ public interface MallCartService {
     void updateSelected(CartUpdateSelectedDTO dto);
 
     void delete(Long cartId);
+
+    void mergeGuestItems(Long userId, List<CartMergeItemDTO> itemDTOList);
 }

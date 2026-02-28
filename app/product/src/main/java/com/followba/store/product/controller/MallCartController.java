@@ -5,6 +5,7 @@ import com.followba.store.product.convert.MallCartConvert;
 import com.followba.store.product.dto.CartItemDTO;
 import com.followba.store.product.service.MallCartService;
 import com.followba.store.product.vo.in.CartAddIn;
+import com.followba.store.product.vo.in.CartMergeIn;
 import com.followba.store.product.vo.in.CartUpdateQuantityIn;
 import com.followba.store.product.vo.in.CartUpdateSelectedIn;
 import com.followba.store.product.vo.out.CartItemOut;
@@ -53,6 +54,12 @@ public class MallCartController {
     @PutMapping("/update-selected")
     public Out<CommonBooleanOut> updateSelected(@Valid @RequestBody CartUpdateSelectedIn in) {
         mallCartService.updateSelected(MallCartConvert.INSTANCE.toCartUpdateSelectedDTO(in));
+        return Out.success(CommonBooleanOut.ok());
+    }
+
+    @PostMapping("/merge")
+    public Out<CommonBooleanOut> merge(@Valid @RequestBody CartMergeIn in) {
+        mallCartService.mergeGuestItems(null, MallCartConvert.INSTANCE.toCartMergeItemDTOList(in.getItems()));
         return Out.success(CommonBooleanOut.ok());
     }
 

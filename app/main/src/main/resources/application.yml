@@ -14,8 +14,8 @@ spring:
 i-tool:
   auth:
     head-token-name: Authorization
-    exclude-path: /,/health/status,/js/**,/css/**,/images/**,/open/**,/pay/v3/notify/refund,/pay/v3/notify/order,/pay/v3/notify/transferBills,/auth/login,/auth/logout
-    exclude-path-auth: /,/health/status,/js/**,/css/**,/images/**,/open/**,/pay/v3/notify/refund,/pay/v3/notify/order,/pay/v3/notify/transferBills,/auth/login,/auth/logout,/mall/product/**
+    exclude-path: /,/health/status,/js/**,/css/**,/images/**,/open/**,/pay/v3/notify/refund,/pay/v3/notify/order,/pay/v3/notify/transferBills,/auth/login,/auth/logout,/mall/auth/login,/mall/auth/register
+    exclude-path-auth: /,/health/status,/js/**,/css/**,/images/**,/open/**,/pay/v3/notify/refund,/pay/v3/notify/order,/pay/v3/notify/transferBills,/auth/login,/auth/logout,/mall/auth/login,/mall/auth/register,/mall/product/**
 
 log:
   dir: logs

@@ -23,8 +23,22 @@ public class BizTradeCartMapper {
         dto.setId(po.getId());
     }
 
+    public void insertBatch(List<TradeCartDTO> dtoList) {
+        if (dtoList == null || dtoList.isEmpty()) {
+            return;
+        }
+        dtoList.stream().map(TradeCartConvert.INSTANCE::toPO).forEach(mapper::insert);
+    }
+
     public void updateById(TradeCartDTO dto) {
         mapper.updateById(TradeCartConvert.INSTANCE.toPO(dto));
+    }
+
+    public void updateBatch(List<TradeCartDTO> dtoList) {
+        if (dtoList == null || dtoList.isEmpty()) {
+            return;
+        }
+        dtoList.stream().map(TradeCartConvert.INSTANCE::toPO).forEach(mapper::updateById);
     }
 
     public TradeCartDTO selectById(Long id) {
@@ -51,6 +65,16 @@ public class BizTradeCartMapper {
         wrapper.eq(TradeCart::getUserId, userId);
         wrapper.eq(TradeCart::getSelected, selected);
         wrapper.orderByDesc(TradeCart::getId);
+        return TradeCartConvert.INSTANCE.toDTO(mapper.selectList(wrapper));
+    }
+
+    public List<TradeCartDTO> selectListByUserIdAndSkuIds(Long userId, Set<Long> skuIds) {
+        if (skuIds == null || skuIds.isEmpty()) {
+            return List.of();
+        }
+        LambdaQueryWrapper<TradeCart> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(TradeCart::getUserId, userId);
+        wrapper.in(TradeCart::getSkuId, skuIds);
         return TradeCartConvert.INSTANCE.toDTO(mapper.selectList(wrapper));
     }
 
