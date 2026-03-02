@@ -11,7 +11,27 @@ public enum TradeCheckoutOrderStatusEnum {
     /**
      * 已创建 / Created.
      */
-    CREATED(0);
+    CREATED(0),
+
+    /**
+     * 支付中（已创建 PaymentIntent）/ Pending pay.
+     */
+    PENDING_PAY(1),
+
+    /**
+     * 已支付 / Paid.
+     */
+    PAID(2),
+
+    /**
+     * 支付失败 / Pay failed.
+     */
+    PAY_FAILED(3),
+
+    /**
+     * 已关闭 / Closed.
+     */
+    CLOSED(4);
 
     private final Integer code;
 

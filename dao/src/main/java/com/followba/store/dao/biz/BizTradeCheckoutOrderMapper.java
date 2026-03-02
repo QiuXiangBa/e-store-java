@@ -31,4 +31,14 @@ public class BizTradeCheckoutOrderMapper {
         wrapper.last("limit 1");
         return TradeCheckoutOrderConvert.INSTANCE.toDTO(mapper.selectOne(wrapper));
     }
+
+    /**
+     * 更新订单状态 / Update order status by id.
+     */
+    public void updateStatusById(Long id, Integer status) {
+        TradeCheckoutOrder po = new TradeCheckoutOrder();
+        po.setId(id);
+        po.setStatus(status);
+        mapper.updateById(po);
+    }
 }

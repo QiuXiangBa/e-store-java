@@ -1,6 +1,7 @@
 package com.followba.store.main;
 
 import com.followba.store.auth.annotation.ImportAuth;
+import com.followba.store.payment.annotation.ImportPayment;
 import com.followba.store.product.annotation.ImportProduct;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,6 +9,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @ImportAuth
 @ImportProduct
+@ImportPayment
 @EnableScheduling
 @SpringBootApplication
 public class MainApplication {

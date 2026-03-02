@@ -9,7 +9,7 @@
         <version>${revision}</version>
     </parent>
 
-    <artifactId>main</artifactId>
+    <artifactId>payment</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -17,24 +17,24 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-
     <dependencies>
         <dependency>
-            <groupId>com.followba.store</groupId>
-            <artifactId>auth</artifactId>
+            <groupId>com.stripe</groupId>
+            <artifactId>stripe-java</artifactId>
+            <version>28.4.0</version>
         </dependency>
-
         <dependency>
-            <groupId>com.followba.store</groupId>
-            <artifactId>product</artifactId>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
         </dependency>
-
         <dependency>
-            <groupId>com.followba.store</groupId>
-            <artifactId>payment</artifactId>
-            <version>${revision}</version>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
-
-
 </project>
