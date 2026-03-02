@@ -28,7 +28,29 @@
             <groupId>com.followba.store</groupId>
             <artifactId>product</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.followba.store</groupId>
+            <artifactId>payment</artifactId>
+            <version>${revision}</version>
+        </dependency>
     </dependencies>
 
-
+    <build>
+        <finalName>app</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>3.2.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

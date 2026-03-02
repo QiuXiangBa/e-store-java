@@ -30,7 +30,9 @@ public class MallProductServiceImpl implements MallProductService {
     private BizProductSkuMapper bizProductSkuMapper;
 
     @Override
-    public PageResp<ProductAppSpuDTO> page(ProductPageQueryDTO queryDTO) {
+    public PageResp<ProductAppSpuDTO> page(
+            ProductPageQueryDTO queryDTO
+    ) {
         Integer pageNum = queryDTO.getPageNum() == null ? ProductConstants.CART_DEFAULT_PAGE_NUM : queryDTO.getPageNum();
         Integer pageSize = queryDTO.getPageSize() == null ? ProductConstants.CART_DEFAULT_PAGE_SIZE : queryDTO.getPageSize();
         PageDTO<ProductSpuDTO> pageDTO = bizProductSpuMapper.selectPage(pageNum, pageSize, queryDTO.getKeyword(),

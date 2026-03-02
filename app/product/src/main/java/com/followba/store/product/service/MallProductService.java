@@ -7,7 +7,9 @@ import com.followba.store.product.dto.ProductPageQueryDTO;
 
 public interface MallProductService {
 
-    PageResp<ProductAppSpuDTO> page(ProductPageQueryDTO queryDTO);
+    PageResp<ProductAppSpuDTO> page(
+            ProductPageQueryDTO queryDTO
+    );
 
     ProductAppSpuDetailDTO detail(Long spuId);
 }
