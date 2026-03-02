@@ -10,7 +10,7 @@ public enum ProductConstants implements ErrorCode {
 
     CATEGORY_NOT_EXISTS(61101, "分类不存在"),
     CATEGORY_PARENT_NOT_EXISTS(61102, "父分类不存在"),
-    CATEGORY_PARENT_NOT_FIRST_LEVEL(61103, "父分类必须是一级分类"),
+    CATEGORY_PARENT_LEVEL_EXCEEDED(61103, "父分类层级超过限制，最多支持三级分类"),
     CATEGORY_EXISTS_CHILDREN(61104, "分类下仍存在子分类"),
     CATEGORY_HAVE_BIND_SPU(61105, "分类下存在商品，不能删除"),
     CATEGORY_DISABLED(61106, "分类已禁用"),
@@ -103,7 +103,9 @@ public enum ProductConstants implements ErrorCode {
 
     public static final int COMMENT_REPLY_STATUS_REPLIED = 1;
 
-    public static final int CATEGORY_MIN_LEVEL = 2;
+    public static final int CATEGORY_ROOT_LEVEL = 0;
+
+    public static final int CATEGORY_MAX_LEVEL = 3;
 
     public static final int PROPERTY_SIMPLE_ENABLED_STATUS = 0;
 

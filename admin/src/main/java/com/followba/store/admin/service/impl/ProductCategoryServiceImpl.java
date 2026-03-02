@@ -151,9 +151,24 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         if (category == null) {
             throw new BizException(ProductConstants.CATEGORY_PARENT_NOT_EXISTS);
         }
-        if (!ROOT_PARENT_ID.equals(category.getParentId())) {
-            throw new BizException(ProductConstants.CATEGORY_PARENT_NOT_FIRST_LEVEL);
+        int parentLevel = resolveCategoryLevel(category);
+        if (parentLevel >= ProductConstants.CATEGORY_MAX_LEVEL) {
+            throw new BizException(ProductConstants.CATEGORY_PARENT_LEVEL_EXCEEDED);
         }
+    }
+
+    /**
+     * 解析分类层级（根级=1）/ Resolve category level (root level = 1).
+     */
+    private int resolveCategoryLevel(ProductCategoryDTO category) {
+        if (category == null) {
+            return ProductConstants.CATEGORY_ROOT_LEVEL;
+        }
+        String path = category.getPath();
+        if (path == null || path.isBlank()) {
+            return ROOT_PARENT_ID.equals(category.getParentId()) ? ProductConstants.DEFAULT_ONE : ProductConstants.DEFAULT_ZERO;
+        }
+        return (int) path.chars().filter(ch -> ch == '/').count() - ProductConstants.DEFAULT_ONE;
     }
 
     private void validateCategorySortBatch(List<ProductCategoryDTO> items) {
