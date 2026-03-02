@@ -28,8 +28,8 @@ public class MallProductController {
 
     @GetMapping("/page")
     public Out<PageResp<ProductAppSpuOut>> page(@Valid ProductPageIn in) {
-        ProductPageQueryDTO queryDTO = MallProductConvert.INSTANCE.toProductPageQueryDTO(in);
-        PageResp<ProductAppSpuDTO> pageDTO = mallProductService.page(queryDTO);
+//        ProductPageQueryDTO queryDTO = MallProductConvert.INSTANCE.toProductPageQueryDTO(in);
+        PageResp<ProductAppSpuDTO> pageDTO = mallProductService.page(in);
         return Out.success(PageResp.of(pageDTO.getTotal(), MallProductConvert.INSTANCE.toProductAppSpuOutList(pageDTO.getList())));
     }
 

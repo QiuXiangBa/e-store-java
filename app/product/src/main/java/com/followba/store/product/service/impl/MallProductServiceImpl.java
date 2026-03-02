@@ -13,6 +13,7 @@ import com.followba.store.product.dto.ProductAppSpuDTO;
 import com.followba.store.product.dto.ProductAppSpuDetailDTO;
 import com.followba.store.product.dto.ProductPageQueryDTO;
 import com.followba.store.product.service.MallProductService;
+import com.followba.store.product.vo.in.ProductPageIn;
 import org.springframework.stereotype.Service;
 
 import jakarta.annotation.Resource;
@@ -30,11 +31,13 @@ public class MallProductServiceImpl implements MallProductService {
     private BizProductSkuMapper bizProductSkuMapper;
 
     @Override
-    public PageResp<ProductAppSpuDTO> page(ProductPageQueryDTO queryDTO) {
-        Integer pageNum = queryDTO.getPageNum() == null ? ProductConstants.CART_DEFAULT_PAGE_NUM : queryDTO.getPageNum();
-        Integer pageSize = queryDTO.getPageSize() == null ? ProductConstants.CART_DEFAULT_PAGE_SIZE : queryDTO.getPageSize();
-        PageDTO<ProductSpuDTO> pageDTO = bizProductSpuMapper.selectPage(pageNum, pageSize, queryDTO.getKeyword(),
-                null, queryDTO.getCategoryId(), null);
+    public PageResp<ProductAppSpuDTO> page(
+            ProductPageIn in
+    ) {
+        Integer pageNum = in.getPageNum() == null ? ProductConstants.CART_DEFAULT_PAGE_NUM : in.getPageNum();
+        Integer pageSize = in.getPageSize() == null ? ProductConstants.CART_DEFAULT_PAGE_SIZE : in.getPageSize();
+        PageDTO<ProductSpuDTO> pageDTO = bizProductSpuMapper.selectPage(pageNum, pageSize, in.getKeyword(),
+                null, in.getCategoryId(), null);
         List<ProductAppSpuDTO> list = pageDTO.getList().stream()
                 .filter(spu -> Objects.equals(spu.getStatus(), ProductSpuStatusEnum.ENABLE.getCode()))
                 .map(this::toProductAppSpuDTO)

@@ -7,7 +7,6 @@ import com.followba.store.dao.dto.TradeCheckoutOrderDTO;
 import com.followba.store.dao.enums.TradeCheckoutOrderStatusEnum;
 import com.followba.store.payment.config.StripeProperties;
 import com.followba.store.payment.service.impl.MallPaymentServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,7 +17,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -43,11 +41,6 @@ class MallPaymentServiceImplTest {
 
     private static final Long USER_ID = 1L;
     private static final Long ORDER_ID = 100L;
-
-    @BeforeEach
-    void setUp() {
-        when(stripeProperties.getCurrency()).thenReturn("usd");
-    }
 
     @Test
     void createPaymentIntent_shouldThrowWhenOrderNotExists() {
