@@ -427,9 +427,18 @@ public class ProductSpuServiceImpl implements ProductSpuService {
         if (valueIds.isEmpty()) {
             return;
         }
-        Map<Long, String> valuePicMap = bizProductPropertyValueMapper.selectByIds(valueIds)
-                .stream()
-                .collect(Collectors.toMap(ProductPropertyValueDTO::getId, ProductPropertyValueDTO::getPicUrl, (left, right) -> left));
+        // 这里不能直接用 Collectors.toMap：当 picUrl 为 null 时，toMap 内部 merge 会抛 NPE。
+        // Do not use Collectors.toMap directly here: null picUrl triggers NPE in merge.
+        Map<Long, String> valuePicMap = new java.util.HashMap<>();
+        for (ProductPropertyValueDTO value : bizProductPropertyValueMapper.selectByIds(valueIds)) {
+            if (value == null || value.getId() == null) {
+                continue;
+            }
+            if (value.getPicUrl() == null || value.getPicUrl().isBlank()) {
+                continue;
+            }
+            valuePicMap.putIfAbsent(value.getId(), value.getPicUrl());
+        }
         skuList.forEach(sku -> {
             if (sku.getProperties() == null || sku.getProperties().isEmpty()) {
                 return;
