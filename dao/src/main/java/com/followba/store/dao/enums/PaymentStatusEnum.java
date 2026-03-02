@@ -38,8 +38,9 @@ public enum PaymentStatusEnum {
         if (code == null) {
             return false;
         }
+        // FAILED 允许后续重试并回正为 SUCCEEDED，因此不作为终态
+        // FAILED can be retried and eventually turned into SUCCEEDED.
         return SUCCEEDED.getCode().equals(code)
-                || FAILED.getCode().equals(code)
                 || CANCELED.getCode().equals(code);
     }
 }

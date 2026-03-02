@@ -60,6 +60,7 @@ public class MallPaymentServiceImpl implements MallPaymentService {
         }
 
         // 幂等：已有 PENDING 支付单则从 Stripe 拉取 clientSecret 返回
+        // Idempotency: if there is a pending payment, fetch client secret from Stripe.
         TradePaymentDTO existing = bizTradePaymentMapper.selectByCheckoutOrderId(checkoutOrderId);
         if (existing != null && PaymentStatusEnum.PENDING.getCode().equals(existing.getStatus())) {
             try {
@@ -69,8 +70,12 @@ public class MallPaymentServiceImpl implements MallPaymentService {
                 dto.setPaymentIntentId(existing.getStripePaymentIntentId());
                 return dto;
             } catch (Exception ignored) {
-                // 拉取失败则新建
+                // 拉取失败则继续新建，并回写到既有支付单，避免唯一键冲突
+                // If retrieve fails, create a new intent and update existing record to avoid unique-key conflict.
             }
+        }
+        if (existing != null && PaymentStatusEnum.SUCCEEDED.getCode().equals(existing.getStatus())) {
+            throw new BizException(PaymentConstants.ORDER_ALREADY_PAID);
         }
 
         String currency = stripeProperties.getCurrency() != null ? stripeProperties.getCurrency() : "usd";
@@ -92,15 +97,19 @@ public class MallPaymentServiceImpl implements MallPaymentService {
             throw new BizException(PaymentConstants.ORDER_STATUS_INVALID);
         }
 
-        TradePaymentDTO paymentDTO = new TradePaymentDTO();
-        paymentDTO.setCheckoutOrderId(checkoutOrderId);
-        paymentDTO.setStripePaymentIntentId(intent.getId());
-        paymentDTO.setAmount(amount);
-        paymentDTO.setCurrency(currency);
-        paymentDTO.setStatus(PaymentStatusEnum.PENDING.getCode());
-        paymentDTO.setDeleted(false);
-        paymentDTO.setTenantId(0L);
-        bizTradePaymentMapper.insert(paymentDTO);
+        if (existing != null) {
+            bizTradePaymentMapper.updateForNewIntent(existing.getId(), intent.getId(), amount, currency);
+        } else {
+            TradePaymentDTO paymentDTO = new TradePaymentDTO();
+            paymentDTO.setCheckoutOrderId(checkoutOrderId);
+            paymentDTO.setStripePaymentIntentId(intent.getId());
+            paymentDTO.setAmount(amount);
+            paymentDTO.setCurrency(currency);
+            paymentDTO.setStatus(PaymentStatusEnum.PENDING.getCode());
+            paymentDTO.setDeleted(false);
+            paymentDTO.setTenantId(0L);
+            bizTradePaymentMapper.insert(paymentDTO);
+        }
 
         bizTradeCheckoutOrderMapper.updateStatusById(checkoutOrderId, TradeCheckoutOrderStatusEnum.PENDING_PAY.getCode());
 
@@ -145,8 +154,10 @@ public class MallPaymentServiceImpl implements MallPaymentService {
         if (payment == null) {
             return;
         }
-        if (PaymentStatusEnum.isTerminal(payment.getStatus())) {
-            return; // 幂等
+        Integer status = payment.getStatus();
+        if (PaymentStatusEnum.SUCCEEDED.getCode().equals(status)
+                || PaymentStatusEnum.CANCELED.getCode().equals(status)) {
+            return; // 幂等 / Idempotent
         }
         bizTradePaymentMapper.updateStatusAndPaidAt(payment.getId(), PaymentStatusEnum.SUCCEEDED, new Date());
         bizTradeCheckoutOrderMapper.updateStatusById(payment.getCheckoutOrderId(), TradeCheckoutOrderStatusEnum.PAID.getCode());
@@ -158,7 +169,10 @@ public class MallPaymentServiceImpl implements MallPaymentService {
         if (payment == null) {
             return;
         }
-        if (PaymentStatusEnum.isTerminal(payment.getStatus())) {
+        Integer status = payment.getStatus();
+        if (PaymentStatusEnum.SUCCEEDED.getCode().equals(status)
+                || PaymentStatusEnum.CANCELED.getCode().equals(status)
+                || PaymentStatusEnum.FAILED.getCode().equals(status)) {
             return;
         }
         bizTradePaymentMapper.updateStatus(payment.getId(), PaymentStatusEnum.FAILED);
@@ -171,7 +185,9 @@ public class MallPaymentServiceImpl implements MallPaymentService {
         if (payment == null) {
             return;
         }
-        if (PaymentStatusEnum.isTerminal(payment.getStatus())) {
+        Integer status = payment.getStatus();
+        if (PaymentStatusEnum.SUCCEEDED.getCode().equals(status)
+                || PaymentStatusEnum.CANCELED.getCode().equals(status)) {
             return;
         }
         bizTradePaymentMapper.updateStatus(payment.getId(), PaymentStatusEnum.CANCELED);

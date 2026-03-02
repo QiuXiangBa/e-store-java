@@ -56,4 +56,18 @@ public class BizTradePaymentMapper {
         po.setStatus(status.getCode());
         mapper.updateById(po);
     }
+
+    /**
+     * 更新支付意图信息并重置为待支付状态 / Refresh payment intent and reset to pending.
+     */
+    public void updateForNewIntent(Long id, String stripePaymentIntentId, Integer amount, String currency) {
+        TradePayment po = new TradePayment();
+        po.setId(id);
+        po.setStripePaymentIntentId(stripePaymentIntentId);
+        po.setAmount(amount);
+        po.setCurrency(currency);
+        po.setStatus(PaymentStatusEnum.PENDING.getCode());
+        po.setPaidAt(null);
+        mapper.updateById(po);
+    }
 }

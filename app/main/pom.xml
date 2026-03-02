@@ -19,6 +19,13 @@
 
 
     <dependencies>
+        <!-- MapStruct runtime dependency, required by XxxConvert.INSTANCE via org.mapstruct.factory.Mappers -->
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
         <dependency>
             <groupId>com.followba.store</groupId>
             <artifactId>auth</artifactId>
