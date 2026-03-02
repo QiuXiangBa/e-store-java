@@ -1,0 +1,397 @@
+[INFO] Scanning for projects...
+[WARNING] 
+[WARNING] Some problems were encountered while building the effective model for com.followba.store:admin:jar:1.0.0
+[WARNING] 'build.plugins.plugin.version' for org.springframework.boot:spring-boot-maven-plugin is missing. @ com.followba.store:admin:${revision}, /Users/catchword/projects/mall/repos/backend/e-store/admin/pom.xml, line 57, column 21
+[WARNING] 
+[WARNING] It is highly recommended to fix these problems because they threaten the stability of your build.
+[WARNING] 
+[WARNING] For this reason, future Maven versions might no longer support building such malformed projects.
+[WARNING] 
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] e-store                                                            [pom]
+[INFO] frame                                                              [pom]
+[INFO] autoconfigure                                                      [jar]
+[INFO] common                                                             [jar]
+[INFO] mybatis                                                            [jar]
+[INFO] web                                                                [jar]
+[INFO] objectstorage                                                      [jar]
+[INFO] dao                                                                [jar]
+[INFO] app                                                                [pom]
+[INFO] product                                                            [jar]
+[INFO] auth                                                               [jar]
+[INFO] main                                                               [jar]
+[INFO] admin                                                              [jar]
+[INFO] 
+[INFO] ---------------------< com.followba.store:e-store >---------------------
+[INFO] Building e-store 1.0.0                                            [1/13]
+[INFO]   from pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ e-store ---
+[INFO] 
+[INFO] ----------------------< com.followba.store:frame >----------------------
+[INFO] Building frame 1.0.0                                              [2/13]
+[INFO]   from frame/pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ frame ---
+[INFO] 
+[INFO] ------------------< com.followba.store:autoconfigure >------------------
+[INFO] Building autoconfigure 1.0.0                                      [3/13]
+[INFO]   from frame/autoconfigure/pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ autoconfigure ---
+[INFO] Deleting /Users/catchword/projects/mall/repos/backend/e-store/frame/autoconfigure/target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ autoconfigure ---
+[INFO] Copying 2 resources from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ autoconfigure ---
+[INFO] Changes detected - recompiling the module! :source
+[INFO] Compiling 1 source file with javac [debug release 17] to target/classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ autoconfigure ---
+[INFO] skip non existing resourceDirectory /Users/catchword/projects/mall/repos/backend/e-store/frame/autoconfigure/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ autoconfigure ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ autoconfigure ---
+[INFO] 
+[INFO] --- jar:3.4.1:jar (default-jar) @ autoconfigure ---
+[INFO] Building jar: /Users/catchword/projects/mall/repos/backend/e-store/frame/autoconfigure/target/autoconfigure-1.0.0.jar
+[INFO] 
+[INFO] ---------------------< com.followba.store:common >----------------------
+[INFO] Building common 1.0.0                                             [4/13]
+[INFO]   from frame/common/pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ common ---
+[INFO] Deleting /Users/catchword/projects/mall/repos/backend/e-store/frame/common/target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ common ---
+[INFO] Copying 0 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ common ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 14 source files with javac [debug release 17] to target/classes
+[INFO] /Users/catchword/projects/mall/repos/backend/e-store/frame/common/src/main/java/com/followba/store/common/utils/ObjectJsonUtil.java: /Users/catchword/projects/mall/repos/backend/e-store/frame/common/src/main/java/com/followba/store/common/utils/ObjectJsonUtil.java使用或覆盖了已过时的 API。
+[INFO] /Users/catchword/projects/mall/repos/backend/e-store/frame/common/src/main/java/com/followba/store/common/utils/ObjectJsonUtil.java: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ common ---
+[INFO] skip non existing resourceDirectory /Users/catchword/projects/mall/repos/backend/e-store/frame/common/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ common ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ common ---
+[INFO] 
+[INFO] --- jar:3.4.1:jar (default-jar) @ common ---
+[INFO] Building jar: /Users/catchword/projects/mall/repos/backend/e-store/frame/common/target/common-1.0.0.jar
+[INFO] 
+[INFO] ---------------------< com.followba.store:mybatis >---------------------
+[INFO] Building mybatis 1.0.0                                            [5/13]
+[INFO]   from frame/mybatis/pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[WARNING] The artifact mysql:mysql-connector-java:jar:8.0.33 has been relocated to com.mysql:mysql-connector-j:jar:8.0.33: MySQL Connector/J artifacts moved to reverse-DNS compliant Maven 2+ coordinates.
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ mybatis ---
+[INFO] Deleting /Users/catchword/projects/mall/repos/backend/e-store/frame/mybatis/target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ mybatis ---
+[INFO] Copying 0 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ mybatis ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 3 source files with javac [debug release 17] to target/classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ mybatis ---
+[INFO] skip non existing resourceDirectory /Users/catchword/projects/mall/repos/backend/e-store/frame/mybatis/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ mybatis ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ mybatis ---
+[INFO] 
+[INFO] --- jar:3.4.1:jar (default-jar) @ mybatis ---
+[INFO] Building jar: /Users/catchword/projects/mall/repos/backend/e-store/frame/mybatis/target/mybatis-1.0.0.jar
+[INFO] 
+[INFO] -----------------------< com.followba.store:web >-----------------------
+[INFO] Building web 1.0.0                                                [6/13]
+[INFO]   from frame/web/pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ web ---
+[INFO] Deleting /Users/catchword/projects/mall/repos/backend/e-store/frame/web/target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ web ---
+[INFO] Copying 0 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ web ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 22 source files with javac [debug release 17] to target/classes
+[INFO] /Users/catchword/projects/mall/repos/backend/e-store/frame/web/src/main/java/com/followba/store/web/interceptor/TrackableInterceptor.java: /Users/catchword/projects/mall/repos/backend/e-store/frame/web/src/main/java/com/followba/store/web/interceptor/TrackableInterceptor.java使用了未经检查或不安全的操作。
+[INFO] /Users/catchword/projects/mall/repos/backend/e-store/frame/web/src/main/java/com/followba/store/web/interceptor/TrackableInterceptor.java: 有关详细信息, 请使用 -Xlint:unchecked 重新编译。
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ web ---
+[INFO] skip non existing resourceDirectory /Users/catchword/projects/mall/repos/backend/e-store/frame/web/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ web ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ web ---
+[INFO] 
+[INFO] --- jar:3.4.1:jar (default-jar) @ web ---
+[INFO] Building jar: /Users/catchword/projects/mall/repos/backend/e-store/frame/web/target/web-1.0.0.jar
+[INFO] 
+[INFO] ------------------< com.followba.store:objectstorage >------------------
+[INFO] Building objectstorage 1.0.0                                      [7/13]
+[INFO]   from frame/objectstorage/pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ objectstorage ---
+[INFO] Deleting /Users/catchword/projects/mall/repos/backend/e-store/frame/objectstorage/target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ objectstorage ---
+[INFO] Copying 0 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ objectstorage ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 9 source files with javac [debug release 17] to target/classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ objectstorage ---
+[INFO] skip non existing resourceDirectory /Users/catchword/projects/mall/repos/backend/e-store/frame/objectstorage/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ objectstorage ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ objectstorage ---
+[INFO] 
+[INFO] --- jar:3.4.1:jar (default-jar) @ objectstorage ---
+[INFO] Building jar: /Users/catchword/projects/mall/repos/backend/e-store/frame/objectstorage/target/objectstorage-1.0.0.jar
+[INFO] 
+[INFO] -----------------------< com.followba.store:dao >-----------------------
+[INFO] Building dao 1.0.0                                                [8/13]
+[INFO]   from dao/pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ dao ---
+[INFO] Deleting /Users/catchword/projects/mall/repos/backend/e-store/dao/target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ dao ---
+[INFO] Copying 14 resources from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ dao ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 82 source files with javac [debug release 17] to target/classes
+[WARNING] /Users/catchword/projects/mall/repos/backend/e-store/dao/src/main/java/com/followba/store/dao/convert/ProductSpuConvert.java:[18,16] Unmapped target properties: "deleted, tenantId".
+[WARNING] /Users/catchword/projects/mall/repos/backend/e-store/dao/src/main/java/com/followba/store/dao/convert/ProductBrandConvert.java:[17,18] Unmapped target property: "deleted".
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ dao ---
+[INFO] skip non existing resourceDirectory /Users/catchword/projects/mall/repos/backend/e-store/dao/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ dao ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ dao ---
+[INFO] 
+[INFO] --- jar:3.4.1:jar (default-jar) @ dao ---
+[INFO] Building jar: /Users/catchword/projects/mall/repos/backend/e-store/dao/target/dao-1.0.0.jar
+[INFO] 
+[INFO] -----------------------< com.followba.store:app >-----------------------
+[INFO] Building app 1.0.0                                                [9/13]
+[INFO]   from app/pom.xml
+[INFO] --------------------------------[ pom ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ app ---
+[INFO] 
+[INFO] ---------------------< com.followba.store:product >---------------------
+[INFO] Building product 1.0.0                                           [10/13]
+[INFO]   from app/product/pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ product ---
+[INFO] Deleting /Users/catchword/projects/mall/repos/backend/e-store/app/product/target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ product ---
+[INFO] Copying 2 resources from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ product ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 2 source files with javac [debug release 17] to target/classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ product ---
+[INFO] skip non existing resourceDirectory /Users/catchword/projects/mall/repos/backend/e-store/app/product/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ product ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ product ---
+[INFO] 
+[INFO] --- jar:3.4.1:jar (default-jar) @ product ---
+[INFO] Building jar: /Users/catchword/projects/mall/repos/backend/e-store/app/product/target/product-1.0.0.jar
+[INFO] 
+[INFO] ----------------------< com.followba.store:auth >-----------------------
+[INFO] Building auth 1.0.0                                              [11/13]
+[INFO]   from app/auth/pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ auth ---
+[INFO] Deleting /Users/catchword/projects/mall/repos/backend/e-store/app/auth/target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ auth ---
+[INFO] Copying 0 resource from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ auth ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 4 source files with javac [debug release 17] to target/classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ auth ---
+[INFO] skip non existing resourceDirectory /Users/catchword/projects/mall/repos/backend/e-store/app/auth/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ auth ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ auth ---
+[INFO] 
+[INFO] --- jar:3.4.1:jar (default-jar) @ auth ---
+[INFO] Building jar: /Users/catchword/projects/mall/repos/backend/e-store/app/auth/target/auth-1.0.0.jar
+[INFO] 
+[INFO] ----------------------< com.followba.store:main >-----------------------
+[INFO] Building main 1.0.0                                              [12/13]
+[INFO]   from app/main/pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ main ---
+[INFO] Deleting /Users/catchword/projects/mall/repos/backend/e-store/app/main/target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ main ---
+[INFO] Copying 7 resources from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ main ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 2 source files with javac [debug release 17] to target/classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ main ---
+[INFO] skip non existing resourceDirectory /Users/catchword/projects/mall/repos/backend/e-store/app/main/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ main ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ main ---
+[INFO] 
+[INFO] --- jar:3.4.1:jar (default-jar) @ main ---
+[INFO] Building jar: /Users/catchword/projects/mall/repos/backend/e-store/app/main/target/main-1.0.0.jar
+[INFO] 
+[INFO] ----------------------< com.followba.store:admin >----------------------
+[INFO] Building admin 1.0.0                                             [13/13]
+[INFO]   from admin/pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.2.0:clean (default-clean) @ admin ---
+[INFO] Deleting /Users/catchword/projects/mall/repos/backend/e-store/admin/target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ admin ---
+[INFO] Copying 7 resources from src/main/resources to target/classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ admin ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 100 source files with javac [debug release 17] to target/classes
+[WARNING] /Users/catchword/projects/mall/repos/backend/e-store/admin/src/main/java/com/followba/store/admin/convert/ProductSpuPropertyConvert.java:[15,27] Unmapped target properties: "id, spuId, propertyName, creator, createTime, updater, updateTime, deleted, tenantId".
+[WARNING] /Users/catchword/projects/mall/repos/backend/e-store/admin/src/main/java/com/followba/store/admin/convert/ProductBrandConvert.java:[21,21] Unmapped target properties: "id, creator, createTime, updater, updateTime, tenantId".
+[WARNING] /Users/catchword/projects/mall/repos/backend/e-store/admin/src/main/java/com/followba/store/admin/convert/ProductBrandConvert.java:[24,21] Unmapped target properties: "creator, createTime, updater, updateTime, tenantId".
+[WARNING] /Users/catchword/projects/mall/repos/backend/e-store/admin/src/main/java/com/followba/store/admin/convert/AuthConvert.java:[73,20] Unmapped target properties: "remark, deptId, postIds, email, mobile, sex, avatar".
+[WARNING] /Users/catchword/projects/mall/repos/backend/e-store/admin/src/main/java/com/followba/store/admin/convert/ProductPropertyConvert.java:[17,24] Unmapped target properties: "creator, createTime, updater, updateTime, deleted, tenantId".
+[WARNING] /Users/catchword/projects/mall/repos/backend/e-store/admin/src/main/java/com/followba/store/admin/convert/ProductPropertyValueConvert.java:[17,29] Unmapped target properties: "creator, createTime, updater, updateTime, deleted, tenantId".
+[WARNING] /Users/catchword/projects/mall/repos/backend/e-store/admin/src/main/java/com/followba/store/admin/convert/ProductCategoryConvert.java:[18,24] Unmapped target properties: "creator, createTime, updater, updateTime, deleted, tenantId".
+[WARNING] /Users/catchword/projects/mall/repos/backend/e-store/admin/src/main/java/com/followba/store/admin/convert/ProductCategoryConvert.java:[20,24] Unmapped target properties: "parentId, name, picUrl, bigPicUrl, status, creator, createTime, updater, updateTime, deleted, tenantId".
+[WARNING] /Users/catchword/projects/mall/repos/backend/e-store/admin/src/main/java/com/followba/store/admin/convert/ProductCategoryPropertyConvert.java:[15,32] Unmapped target properties: "id, categoryId, creator, createTime, updater, updateTime, deleted, tenantId".
+[WARNING] /Users/catchword/projects/mall/repos/backend/e-store/admin/src/main/java/com/followba/store/admin/convert/ProductCategoryPropertyConvert.java:[19,35] Unmapped target properties: "propertyName, propertyType".
+[WARNING] /Users/catchword/projects/mall/repos/backend/e-store/admin/src/main/java/com/followba/store/admin/convert/ProductSkuConvert.java:[15,19] Unmapped target properties: "spuId, salesCount, creator, createTime, updater, updateTime, deleted, tenantId".
+[WARNING] /Users/catchword/projects/mall/repos/backend/e-store/admin/src/main/java/com/followba/store/admin/convert/ProductCommentConvert.java:[17,23] Unmapped target properties: "id, spuName, replyStatus, replyUserId, replyContent, replyTime, creator, createTime, updater, updateTime, deleted, tenantId".
+[WARNING] /Users/catchword/projects/mall/repos/backend/e-store/admin/src/main/java/com/followba/store/admin/convert/ProductSpuConvert.java:[26,19] Unmapped target properties: "status, price, marketPrice, costPrice, stock, salesCount, virtualSalesCount, browseCount, creator, createTime, updater, updateTime".
+[WARNING] /Users/catchword/projects/mall/repos/backend/e-store/admin/src/main/java/com/followba/store/admin/convert/ProductSpuConvert.java:[31,22] Unmapped target properties: "displayProperties, skus".
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ admin ---
+[INFO] skip non existing resourceDirectory /Users/catchword/projects/mall/repos/backend/e-store/admin/src/test/resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ admin ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] Compiling 1 source file with javac [debug release 17] to target/test-classes
+[INFO] 
+[INFO] --- surefire:3.2.5:test (default-test) @ admin ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running com.followba.store.admin.service.impl.ProductCategoryServiceImplTest
+OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.501 s -- in com.followba.store.admin.service.impl.ProductCategoryServiceImplTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 5, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] 
+[INFO] --- jar:3.4.1:jar (default-jar) @ admin ---
+[INFO] Building jar: /Users/catchword/projects/mall/repos/backend/e-store/admin/target/admin.jar
+[INFO] 
+[INFO] --- spring-boot:4.1.0-M1:repackage (default) @ admin ---
+[INFO] Replacing main artifact /Users/catchword/projects/mall/repos/backend/e-store/admin/target/admin.jar with repackaged archive, adding nested dependencies in BOOT-INF/.
+[INFO] The original artifact has been renamed to /Users/catchword/projects/mall/repos/backend/e-store/admin/target/admin.jar.original
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for e-store 1.0.0:
+[INFO] 
+[INFO] e-store ............................................ SUCCESS [  0.046 s]
+[INFO] frame .............................................. SUCCESS [  0.001 s]
+[INFO] autoconfigure ...................................... SUCCESS [  0.813 s]
+[INFO] common ............................................. SUCCESS [  0.416 s]
+[INFO] mybatis ............................................ SUCCESS [  0.195 s]
+[INFO] web ................................................ SUCCESS [  0.361 s]
+[INFO] objectstorage ...................................... SUCCESS [  0.263 s]
+[INFO] dao ................................................ SUCCESS [  1.190 s]
+[INFO] app ................................................ SUCCESS [  0.001 s]
+[INFO] product ............................................ SUCCESS [  0.133 s]
+[INFO] auth ............................................... SUCCESS [  0.135 s]
+[INFO] main ............................................... SUCCESS [  0.138 s]
+[INFO] admin .............................................. SUCCESS [  2.286 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  6.106 s
+[INFO] Finished at: 2026-02-15T22:08:52+08:00
+[INFO] ------------------------------------------------------------------------
+Standard Commons Logging discovery in action with spring-jcl: please remove commons-logging.jar from classpath in order to avoid potential conflicts
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.1)
+
+2026-02-15 22:08:52.782  INFO 1078 --- [main] [] [] [] c.followba.store.admin.AdminApplication  : Starting AdminApplication using Java 17.0.13 with PID 1078 (/Users/catchword/projects/mall/repos/backend/e-store/admin/target/admin.jar started by catchword in /Users/catchword/projects/mall/repos/backend/e-store)
+2026-02-15 22:08:52.783  INFO 1078 --- [main] [] [] [] c.followba.store.admin.AdminApplication  : The following 1 profile is active: "dev"
+2026-02-15 22:08:53.399  INFO 1078 --- [main] [] [] [] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8092 (http)
+2026-02-15 22:08:53.405  INFO 1078 --- [main] [] [] [] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-02-15 22:08:53.405  INFO 1078 --- [main] [] [] [] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.17]
+2026-02-15 22:08:53.426  INFO 1078 --- [main] [] [] [] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-02-15 22:08:53.427  INFO 1078 --- [main] [] [] [] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 618 ms
+Standard Commons Logging discovery in action with spring-jcl: please remove commons-logging.jar from classpath in order to avoid potential conflicts
+Logging initialized using 'class org.apache.ibatis.logging.stdout.StdOutImpl' adapter.
+Initialization Sequence datacenterId:0 workerId:16
+ _ _   |_  _ _|_. ___ _ |    _ 
+| | |\/|_)(_| | |_\  |_)||_|_\ 
+     /               |         
+                        3.5.5 
+2026-02-15 22:08:54.214  INFO 1078 --- [main] [] [] [] c.f.s.o.core.ObjectStorageService        : -- ObjectStorageService init -- 
+2026-02-15 22:08:54.421  INFO 1078 --- [main] [] [] [] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8092 (http) with context path ''
+2026-02-15 22:08:54.427  INFO 1078 --- [main] [] [] [] c.followba.store.admin.AdminApplication  : Started AdminApplication in 1.956 seconds (process running for 2.18)
+2026-02-15 22:09:14.790  INFO 1078 --- [http-nio-8092-exec-1] [] [] [] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-02-15 22:09:14.790  INFO 1078 --- [http-nio-8092-exec-1] [] [] [] o.s.web.servlet.DispatcherServlet        : Initializing Servlet 'dispatcherServlet'
+2026-02-15 22:09:14.792  INFO 1078 --- [http-nio-8092-exec-1] [] [] [] o.s.web.servlet.DispatcherServlet        : Completed initialization in 1 ms

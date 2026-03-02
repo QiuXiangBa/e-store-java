@@ -30,6 +30,7 @@ public class MallPaymentController {
     public Out<PaymentCreateIntentOut> createIntent(@Valid @RequestBody PaymentCreateIntentIn in) {
         PaymentCreateIntentDTO dto = mallPaymentService.createPaymentIntent(in.getCheckoutOrderId());
         return Out.success(MallPaymentConvert.INSTANCE.toPaymentCreateIntentOut(dto));
+//        return null;
     }
 
     /**
