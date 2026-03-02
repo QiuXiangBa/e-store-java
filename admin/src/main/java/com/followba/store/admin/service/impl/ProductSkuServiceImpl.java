@@ -85,7 +85,11 @@ public class ProductSkuServiceImpl implements ProductSkuService {
                 if (propertyValue == null || propertyValue.getPropertyId() == null) {
                     throw new BizException(ProductConstants.SKU_PROPERTIES_NOT_EXISTS);
                 }
-                property.setValuePicUrl(propertyValue.getPicUrl());
+                // 优先保留前端已选择的规格值图片，避免被属性值默认图覆盖为 null。
+                // Keep client-selected value image first; fallback to default value image from property-value table.
+                if (property.getValuePicUrl() == null || property.getValuePicUrl().isBlank()) {
+                    property.setValuePicUrl(propertyValue.getPicUrl());
+                }
                 skuPropertyIds.add(propertyValue.getPropertyId());
             }
             if (skuPropertyIds.size() != sku.getProperties().size()) {
