@@ -36,7 +36,12 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     public Long createCategory(ProductCategorySaveIn reqVO) {
         validateParentProductCategory(reqVO.getParentId());
         ProductCategoryDTO dto = ProductCategoryConvert.INSTANCE.toDTO(reqVO);
+        dto.setIsLeaf(Boolean.TRUE);
         bizProductCategoryMapper.insert(dto);
+        String path = buildCategoryPath(dto.getParentId(), dto.getId());
+        bizProductCategoryMapper.updatePathById(dto.getId(), path);
+        dto.setPath(path);
+        refreshParentLeafFlag(dto.getParentId());
         return dto.getId();
     }
 
@@ -46,16 +51,36 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         if (reqVO.getId() == null) {
             throw new BizException(ProductConstants.CATEGORY_NOT_EXISTS);
         }
-        validateProductCategoryExists(reqVO.getId());
+        ProductCategoryDTO existing = bizProductCategoryMapper.selectById(reqVO.getId());
+        if (existing == null) {
+            throw new BizException(ProductConstants.CATEGORY_NOT_EXISTS);
+        }
         validateParentProductCategory(reqVO.getParentId());
+        // 当前类目有子类目时，不允许改父级，避免产生三层结构与路径脏数据
+        // Forbid parent change when this node has children to avoid 3-level hierarchy and path dirty data.
+        if (!existing.getParentId().equals(reqVO.getParentId())
+                && bizProductCategoryMapper.countByParentId(reqVO.getId()) > ProductConstants.DEFAULT_ZERO) {
+            throw new BizException(ProductConstants.CATEGORY_EXISTS_CHILDREN);
+        }
         ProductCategoryDTO dto = ProductCategoryConvert.INSTANCE.toDTO(reqVO);
+        dto.setIsLeaf(existing.getIsLeaf());
+        dto.setPath(existing.getPath());
         bizProductCategoryMapper.updateById(dto);
+        if (!existing.getParentId().equals(reqVO.getParentId())) {
+            String path = buildCategoryPath(reqVO.getParentId(), reqVO.getId());
+            bizProductCategoryMapper.updatePathById(reqVO.getId(), path);
+            refreshParentLeafFlag(existing.getParentId());
+            refreshParentLeafFlag(reqVO.getParentId());
+        }
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteCategory(Long id) {
-        validateProductCategoryExists(id);
+        ProductCategoryDTO existing = bizProductCategoryMapper.selectById(id);
+        if (existing == null) {
+            throw new BizException(ProductConstants.CATEGORY_NOT_EXISTS);
+        }
         if (bizProductCategoryMapper.countByParentId(id) > 0) {
             throw new BizException(ProductConstants.CATEGORY_EXISTS_CHILDREN);
         }
@@ -63,6 +88,7 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
             throw new BizException(ProductConstants.CATEGORY_HAVE_BIND_SPU);
         }
         bizProductCategoryMapper.deleteById(id);
+        refreshParentLeafFlag(existing.getParentId());
     }
 
     @Override
@@ -73,7 +99,6 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
     @Override
     public List<ProductCategoryRespVO> getCategoryList(ProductCategoryListIn reqVO) {
         List<ProductCategoryDTO> categoryList = bizProductCategoryMapper.selectList(reqVO.getName(), reqVO.getStatus(), reqVO.getParentId());
-        fillLeafFlag(categoryList);
         return ProductCategoryConvert.INSTANCE.toVO(categoryList);
     }
 
@@ -90,8 +115,14 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
 
     @Override
     public void validatePublishCategory(Long id) {
-        validateCategory(id);
-        if (bizProductCategoryMapper.countByParentId(id) > ProductConstants.DEFAULT_ZERO) {
+        ProductCategoryDTO category = bizProductCategoryMapper.selectById(id);
+        if (category == null) {
+            throw new BizException(ProductConstants.CATEGORY_NOT_EXISTS);
+        }
+        if (category.getStatus() != null && category.getStatus().equals(StatusEnums.DISABLED.getCode())) {
+            throw new BizException(ProductConstants.CATEGORY_DISABLED);
+        }
+        if (!Boolean.TRUE.equals(category.getIsLeaf())) {
             throw new BizException(ProductConstants.CATEGORY_NOT_LEAF);
         }
     }
@@ -125,12 +156,6 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         }
     }
 
-    private void validateProductCategoryExists(Long id) {
-        if (bizProductCategoryMapper.selectById(id) == null) {
-            throw new BizException(ProductConstants.CATEGORY_NOT_EXISTS);
-        }
-    }
-
     private void validateCategorySortBatch(List<ProductCategoryDTO> items) {
         if (items == null || items.isEmpty()) {
             throw new BizException(ProductConstants.CATEGORY_SORT_BATCH_EMPTY);
@@ -150,12 +175,25 @@ public class ProductCategoryServiceImpl implements ProductCategoryService {
         }
     }
 
-    private void fillLeafFlag(List<ProductCategoryDTO> categoryList) {
-        if (categoryList == null || categoryList.isEmpty()) {
+    private String buildCategoryPath(Long parentId, Long id) {
+        if (id == null) {
+            return null;
+        }
+        if (parentId == null || ROOT_PARENT_ID.equals(parentId)) {
+            return "/" + id + "/";
+        }
+        ProductCategoryDTO parent = bizProductCategoryMapper.selectById(parentId);
+        if (parent == null || parent.getPath() == null || parent.getPath().isBlank()) {
+            return "/" + parentId + "/" + id + "/";
+        }
+        return parent.getPath() + id + "/";
+    }
+
+    private void refreshParentLeafFlag(Long parentId) {
+        if (parentId == null || ROOT_PARENT_ID.equals(parentId)) {
             return;
         }
-        Set<Long> idSet = categoryList.stream().map(ProductCategoryDTO::getId).collect(Collectors.toSet());
-        Set<Long> parentIds = bizProductCategoryMapper.selectParentIdsThatHaveChildren(idSet);
-        categoryList.forEach(category -> category.setIsLeaf(!parentIds.contains(category.getId())));
+        boolean hasChildren = bizProductCategoryMapper.countByParentId(parentId) > ProductConstants.DEFAULT_ZERO;
+        bizProductCategoryMapper.updateLeafById(parentId, !hasChildren);
     }
 }

@@ -23,6 +23,8 @@ public class ProductCategoryDTO {
 
     private Boolean isLeaf;
 
+    private String path;
+
     private String creator;
 
     private Date createTime;

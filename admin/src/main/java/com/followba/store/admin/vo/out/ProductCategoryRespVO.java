@@ -23,5 +23,7 @@ public class ProductCategoryRespVO {
 
     private Boolean isLeaf;
 
+    private String path;
+
     private Date createTime;
 }

@@ -48,6 +48,8 @@ CREATE TABLE `product_category` (
                                     `pic_url` varchar(255) NOT NULL COMMENT '移动端分类图',
                                     `big_pic_url` varchar(255) DEFAULT NULL COMMENT 'PC 端分类图',
                                     `sort` int DEFAULT '0' COMMENT '分类排序',
+                                    `is_leaf` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否叶子类目',
+                                    `path` varchar(512) NOT NULL DEFAULT '' COMMENT '类目路径，格式：/1/2/3/',
                                     `status` int NOT NULL COMMENT '开启状态',
                                     `creator` varchar(64) DEFAULT '',
                                     `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -55,7 +57,9 @@ CREATE TABLE `product_category` (
                                     `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
                                     `deleted` tinyint(1) NOT NULL DEFAULT '0',
                                     `tenant_id` bigint NOT NULL DEFAULT '0',
-                                    PRIMARY KEY (`id`)
+                                    PRIMARY KEY (`id`),
+                                    KEY `idx_parent` (`parent_id`, `deleted`),
+                                    KEY `idx_leaf_status` (`is_leaf`, `status`, `deleted`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='商品分类';
 
 -- ----------------------------

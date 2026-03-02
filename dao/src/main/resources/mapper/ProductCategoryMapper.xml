@@ -10,6 +10,8 @@
     <result column="pic_url" jdbcType="VARCHAR" property="picUrl" />
     <result column="big_pic_url" jdbcType="VARCHAR" property="bigPicUrl" />
     <result column="sort" jdbcType="INTEGER" property="sort" />
+    <result column="is_leaf" jdbcType="BIT" property="isLeaf" />
+    <result column="path" jdbcType="VARCHAR" property="path" />
     <result column="status" jdbcType="INTEGER" property="status" />
     <result column="creator" jdbcType="VARCHAR" property="creator" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -20,7 +22,7 @@
   </resultMap>
   <sql id="Base_Column_List">
     <!--@mbg.generated-->
-    id, parent_id, `name`, pic_url, big_pic_url, sort, `status`, creator, create_time, 
+    id, parent_id, `name`, pic_url, big_pic_url, sort, is_leaf, path, `status`, creator, create_time, 
     updater, update_time, deleted, tenant_id
   </sql>
 
