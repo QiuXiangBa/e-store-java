@@ -11,11 +11,11 @@ import com.followba.store.common.context.RequestContext;
 import com.followba.store.common.exception.BizException;
 import com.followba.store.dao.biz.BizSystemOauth2AccessTokenMapper;
 import com.followba.store.dao.biz.BizSystemOauth2RefreshTokenMapper;
-import com.followba.store.dao.biz.BizSystemUsersMapper;
+import com.followba.store.dao.biz.BizMemberUsersMapper;
 import com.followba.store.dao.constant.AuthConstants;
+import com.followba.store.dao.dto.MemberUsersDTO;
 import com.followba.store.dao.dto.SystemOauth2AccessTokenDTO;
 import com.followba.store.dao.dto.SystemOauth2RefreshTokenDTO;
-import com.followba.store.dao.dto.SystemUsersDTO;
 import com.followba.store.product.dto.CartMergeItemDTO;
 import com.followba.store.product.service.MallCartService;
 import jakarta.annotation.Resource;
@@ -31,7 +31,7 @@ import java.util.UUID;
 public class MallAuthServiceImpl implements MallAuthService {
 
     @Resource
-    private BizSystemUsersMapper bizSystemUsersMapper;
+    private BizMemberUsersMapper bizMemberUsersMapper;
 
     @Resource
     private BizSystemOauth2AccessTokenMapper bizSystemOauth2AccessTokenMapper;
@@ -46,7 +46,7 @@ public class MallAuthServiceImpl implements MallAuthService {
     @Transactional(rollbackFor = Exception.class)
     public AuthLoginResultDTO register(AuthRegisterDTO dto) {
         validateRegister(dto);
-        SystemUsersDTO userDTO = new SystemUsersDTO();
+        MemberUsersDTO userDTO = new MemberUsersDTO();
         userDTO.setUsername(dto.getUsername());
         userDTO.setPassword(BCrypt.hashpw(dto.getPassword(), BCrypt.gensalt()));
         userDTO.setNickname(dto.getNickname());
@@ -55,7 +55,7 @@ public class MallAuthServiceImpl implements MallAuthService {
         userDTO.setStatus(AuthConstants.USER_STATUS_ENABLED);
         userDTO.setDeleted(AuthConstants.DEFAULT_NOT_DELETED);
         userDTO.setTenantId((long) AuthConstants.DEFAULT_TENANT_ID);
-        bizSystemUsersMapper.insert(userDTO);
+        bizMemberUsersMapper.insert(userDTO);
         AuthLoginResultDTO resultDTO = buildLoginResult(userDTO);
         mergeGuestCart(userDTO.getId(), dto.getGuestCartItems());
         return resultDTO;
@@ -64,7 +64,7 @@ public class MallAuthServiceImpl implements MallAuthService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public AuthLoginResultDTO login(AuthLoginDTO dto) {
-        SystemUsersDTO userDTO = findUserByAccount(dto.getAccount());
+        MemberUsersDTO userDTO = findUserByAccount(dto.getAccount());
         if (userDTO == null) {
             throw new BizException(AuthConstants.AUTH_LOGIN_USER_NOT_EXISTS);
         }
@@ -96,7 +96,7 @@ public class MallAuthServiceImpl implements MallAuthService {
     @Override
     public AuthUserDTO me() {
         Long userId = getCurrentUserId();
-        SystemUsersDTO userDTO = bizSystemUsersMapper.selectById(userId);
+        MemberUsersDTO userDTO = bizMemberUsersMapper.selectById(userId);
         if (userDTO == null) {
             throw new BizException(AuthConstants.AUTH_LOGIN_USER_NOT_EXISTS);
         }
@@ -104,33 +104,33 @@ public class MallAuthServiceImpl implements MallAuthService {
     }
 
     private void validateRegister(AuthRegisterDTO dto) {
-        if (bizSystemUsersMapper.selectByUsername(dto.getUsername()) != null) {
+        if (bizMemberUsersMapper.selectByUsername(dto.getUsername()) != null) {
             throw new BizException(AuthConstants.AUTH_USERNAME_EXISTS);
         }
-        if (dto.getMobile() != null && !dto.getMobile().isBlank() && bizSystemUsersMapper.selectByMobile(dto.getMobile()) != null) {
+        if (dto.getMobile() != null && !dto.getMobile().isBlank() && bizMemberUsersMapper.selectByMobile(dto.getMobile()) != null) {
             throw new BizException(AuthConstants.AUTH_MOBILE_EXISTS);
         }
-        if (dto.getEmail() != null && !dto.getEmail().isBlank() && bizSystemUsersMapper.selectByEmail(dto.getEmail()) != null) {
+        if (dto.getEmail() != null && !dto.getEmail().isBlank() && bizMemberUsersMapper.selectByEmail(dto.getEmail()) != null) {
             throw new BizException(AuthConstants.AUTH_EMAIL_EXISTS);
         }
     }
 
-    private SystemUsersDTO findUserByAccount(String account) {
+    private MemberUsersDTO findUserByAccount(String account) {
         if (account == null || account.isBlank()) {
             return null;
         }
-        SystemUsersDTO byUsername = bizSystemUsersMapper.selectByUsername(account);
+        MemberUsersDTO byUsername = bizMemberUsersMapper.selectByUsername(account);
         if (byUsername != null) {
             return byUsername;
         }
-        SystemUsersDTO byMobile = bizSystemUsersMapper.selectByMobile(account);
+        MemberUsersDTO byMobile = bizMemberUsersMapper.selectByMobile(account);
         if (byMobile != null) {
             return byMobile;
         }
-        return bizSystemUsersMapper.selectByEmail(account);
+        return bizMemberUsersMapper.selectByEmail(account);
     }
 
-    private AuthLoginResultDTO buildLoginResult(SystemUsersDTO userDTO) {
+    private AuthLoginResultDTO buildLoginResult(MemberUsersDTO userDTO) {
         Date now = new Date();
         String accessToken = randomToken();
         String refreshToken = randomToken();
@@ -182,7 +182,7 @@ public class MallAuthServiceImpl implements MallAuthService {
         mallCartService.mergeGuestItems(userId, mergeItemDTOList);
     }
 
-    private AuthUserDTO toAuthUserDTO(SystemUsersDTO userDTO) {
+    private AuthUserDTO toAuthUserDTO(MemberUsersDTO userDTO) {
         AuthUserDTO dto = new AuthUserDTO();
         dto.setUserId(userDTO.getId());
         dto.setUsername(userDTO.getUsername());
