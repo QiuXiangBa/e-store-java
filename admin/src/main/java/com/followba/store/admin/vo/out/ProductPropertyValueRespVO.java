@@ -17,7 +17,5 @@ public class ProductPropertyValueRespVO {
 
     private String remark;
 
-    private String picUrl;
-
     private Date createTime;
 }

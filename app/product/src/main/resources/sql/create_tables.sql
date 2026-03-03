@@ -132,7 +132,6 @@ CREATE TABLE `product_property_value` (
                                           `deleted` tinyint(1) NOT NULL DEFAULT '0',
                                           `tenant_id` bigint NOT NULL DEFAULT '0',
                                           `remark` varchar(255) DEFAULT NULL COMMENT '备注',
-                                          `pic_url` varchar(512) DEFAULT NULL COMMENT '规格值图片 URL',
                                           PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='规格值';
 
