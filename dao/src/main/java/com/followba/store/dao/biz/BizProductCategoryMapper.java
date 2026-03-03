@@ -19,7 +19,9 @@ public class BizProductCategoryMapper {
     private ProductCategoryMapper mapper;
 
     public void insert(ProductCategoryDTO dto) {
-        mapper.insert(ProductCategoryConvert.INSTANCE.toPO(dto));
+        ProductCategory po = ProductCategoryConvert.INSTANCE.toPO(dto);
+        mapper.insert(po);
+        dto.setId(po.getId());
     }
 
     public void updateById(ProductCategoryDTO dto) {
@@ -75,5 +77,25 @@ public class BizProductCategoryMapper {
             return;
         }
         mapper.updateSortBatch(ProductCategoryConvert.INSTANCE.toPO(dtoList));
+    }
+
+    /**
+     * 更新叶子节点标记 / Update leaf flag by id.
+     */
+    public void updateLeafById(Long id, Boolean isLeaf) {
+        ProductCategory po = new ProductCategory();
+        po.setId(id);
+        po.setIsLeaf(isLeaf);
+        mapper.updateById(po);
+    }
+
+    /**
+     * 更新路径 / Update category path by id.
+     */
+    public void updatePathById(Long id, String path) {
+        ProductCategory po = new ProductCategory();
+        po.setId(id);
+        po.setPath(path);
+        mapper.updateById(po);
     }
 }

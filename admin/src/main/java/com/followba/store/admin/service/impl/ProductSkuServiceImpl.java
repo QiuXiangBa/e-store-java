@@ -85,7 +85,6 @@ public class ProductSkuServiceImpl implements ProductSkuService {
                 if (propertyValue == null || propertyValue.getPropertyId() == null) {
                     throw new BizException(ProductConstants.SKU_PROPERTIES_NOT_EXISTS);
                 }
-                property.setValuePicUrl(propertyValue.getPicUrl());
                 skuPropertyIds.add(propertyValue.getPropertyId());
             }
             if (skuPropertyIds.size() != sku.getProperties().size()) {

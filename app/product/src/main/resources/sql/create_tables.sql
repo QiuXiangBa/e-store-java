@@ -48,6 +48,8 @@ CREATE TABLE `product_category` (
                                     `pic_url` varchar(255) NOT NULL COMMENT '移动端分类图',
                                     `big_pic_url` varchar(255) DEFAULT NULL COMMENT 'PC 端分类图',
                                     `sort` int DEFAULT '0' COMMENT '分类排序',
+                                    `is_leaf` tinyint(1) NOT NULL DEFAULT '1' COMMENT '是否叶子类目',
+                                    `path` varchar(512) NOT NULL DEFAULT '' COMMENT '类目路径，格式：/1/2/3/',
                                     `status` int NOT NULL COMMENT '开启状态',
                                     `creator` varchar(64) DEFAULT '',
                                     `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -55,7 +57,9 @@ CREATE TABLE `product_category` (
                                     `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
                                     `deleted` tinyint(1) NOT NULL DEFAULT '0',
                                     `tenant_id` bigint NOT NULL DEFAULT '0',
-                                    PRIMARY KEY (`id`)
+                                    PRIMARY KEY (`id`),
+                                    KEY `idx_parent` (`parent_id`, `deleted`),
+                                    KEY `idx_leaf_status` (`is_leaf`, `status`, `deleted`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='商品分类';
 
 -- ----------------------------
@@ -128,7 +132,6 @@ CREATE TABLE `product_property_value` (
                                           `deleted` tinyint(1) NOT NULL DEFAULT '0',
                                           `tenant_id` bigint NOT NULL DEFAULT '0',
                                           `remark` varchar(255) DEFAULT NULL COMMENT '备注',
-                                          `pic_url` varchar(512) DEFAULT NULL COMMENT '规格值图片 URL',
                                           PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='规格值';
 
@@ -193,41 +196,43 @@ CREATE TABLE `product_spu` (
                                `keyword` varchar(256) NOT NULL COMMENT '关键字',
                                `introduction` varchar(256) NOT NULL COMMENT '商品简介',
                                `description` text NOT NULL COMMENT '商品详情',
-                               `bar_code` varchar(64) NOT NULL COMMENT '条形码',
+                               `bar_code` varchar(64) DEFAULT NULL COMMENT '条形码',
                                `category_id` bigint NOT NULL COMMENT '商品分类编号',
-                               `brand_id` int DEFAULT NULL COMMENT '商品品牌编号',
+                               `brand_id` bigint NOT NULL COMMENT '商品品牌编号',
                                `pic_url` varchar(256) NOT NULL COMMENT '商品封面图',
-                               `slider_pic_urls` varchar(2000) DEFAULT '' COMMENT '商品轮播图地址\n 数组，以逗号分隔\n 最多上传15张',
-                               `material_pic_urls` varchar(2000) DEFAULT '' COMMENT '3:4 主图素材地址数组(JSON)',
+                               `slider_pic_urls` varchar(2000) NOT NULL DEFAULT '[]' COMMENT '商品轮播图地址数组(JSON)',
+                               `material_pic_urls` varchar(2000) NOT NULL DEFAULT '[]' COMMENT '3:4 主图素材地址数组(JSON)',
                                `video_url` varchar(256) DEFAULT NULL COMMENT '商品视频',
                                `sort` int NOT NULL DEFAULT '0' COMMENT '排序字段',
                                `status` int NOT NULL COMMENT '商品状态: 0 上架（开启） 1 下架（禁用）-1 回收',
                                `spec_type` int NOT NULL COMMENT '规格类型：0 单规格 1 多规格',
                                `price` int NOT NULL DEFAULT '-1' COMMENT '商品价格，单位使用：分',
-                               `market_price` int NOT NULL COMMENT '市场价，单位使用：分',
+                               `market_price` int NOT NULL DEFAULT '0' COMMENT '市场价，单位使用：分',
                                `cost_price` int NOT NULL DEFAULT '-1' COMMENT '成本价，单位： 分',
                                `stock` int NOT NULL DEFAULT '0' COMMENT '库存',
-                               `delivery_types` varchar(128) DEFAULT NULL COMMENT '配送方式数组(JSON)',
-                               `delivery_template_id` bigint NOT NULL COMMENT '物流配置模板编号',
+                               `delivery_types` varchar(128) NOT NULL DEFAULT '[]' COMMENT '配送方式数组(JSON)',
+                               `delivery_template_id` bigint DEFAULT NULL COMMENT '物流配置模板编号',
                                `recommend_hot` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否热卖推荐: 0 默认 1 热卖',
                                `recommend_benefit` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否优惠推荐: 0 默认 1 优选',
                                `recommend_best` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否精品推荐: 0 默认 1 精品',
                                `recommend_new` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否新品推荐: 0 默认 1 新品',
                                `recommend_good` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否优品推荐',
-                               `give_integral` int NOT NULL COMMENT '赠送积分',
+                               `give_integral` int NOT NULL DEFAULT '0' COMMENT '赠送积分',
                                `give_coupon_template_ids` varchar(512) DEFAULT '' COMMENT '赠送的优惠劵编号的数组',
-                               `sub_commission_type` int NOT NULL COMMENT '分销类型',
-                               `activity_orders` varchar(16) NOT NULL DEFAULT '' COMMENT '活动显示排序0=默认, 1=秒杀，2=砍价，3=拼团',
+                               `sub_commission_type` int NOT NULL DEFAULT '0' COMMENT '分销类型',
+                               `activity_orders` varchar(64) NOT NULL DEFAULT '' COMMENT '活动显示排序0=默认, 1=秒杀，2=砍价，3=拼团',
                                `sales_count` int DEFAULT '0' COMMENT '商品销量',
                                `virtual_sales_count` int DEFAULT '0' COMMENT '虚拟销量',
                                `browse_count` int DEFAULT '0' COMMENT '商品点击量',
                                `creator` varchar(64) DEFAULT '',
-                               `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                               `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
                                `updater` varchar(64) DEFAULT '',
-                               `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                               `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
                                `deleted` tinyint(1) NOT NULL DEFAULT '0',
                                `tenant_id` bigint NOT NULL DEFAULT '0',
-                               PRIMARY KEY (`id`)
+                               PRIMARY KEY (`id`),
+                               KEY `idx_category` (`category_id`, `status`, `deleted`),
+                               KEY `idx_brand` (`brand_id`, `status`, `deleted`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci ROW_FORMAT=DYNAMIC COMMENT='商品spu';
 
 -- ----------------------------

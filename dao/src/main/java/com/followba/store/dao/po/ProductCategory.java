@@ -50,6 +50,18 @@ public class ProductCategory {
     private Integer sort;
 
     /**
+     * 是否叶子类目
+     */
+    @TableField(value = "is_leaf")
+    private Boolean isLeaf;
+
+    /**
+     * 类目路径，格式：/1/2/3/
+     */
+    @TableField(value = "path")
+    private String path;
+
+    /**
      * 开启状态
      */
     @TableField(value = "`status`")
