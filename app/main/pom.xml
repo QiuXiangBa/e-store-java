@@ -32,7 +32,6 @@
         <dependency>
             <groupId>com.followba.store</groupId>
             <artifactId>payment</artifactId>
-            <version>${revision}</version>
         </dependency>
     </dependencies>
 
