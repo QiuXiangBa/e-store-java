@@ -1,6 +1,7 @@
 package com.followba.store.dao.biz;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.followba.store.dao.convert.TradeOrderConvert;
 import com.followba.store.dao.dto.PageDTO;
@@ -51,6 +52,28 @@ public class BizTradeOrderMapper {
 
     public void updateById(TradeOrderDTO dto) {
         mapper.updateById(TradeOrderConvert.INSTANCE.toPO(dto));
+    }
+
+    public int updateStatusByIdAndFromStatus(Long id,
+                                             Integer fromStatus,
+                                             Integer toStatus) {
+        return updateStatusByIdAndFromStatus(id, fromStatus, toStatus, null, null, null);
+    }
+
+    public int updateStatusByIdAndFromStatus(Long id,
+                                             Integer fromStatus,
+                                             Integer toStatus,
+                                             String cancelReason,
+                                             java.util.Date cancelTime,
+                                             java.util.Date closeTime) {
+        LambdaUpdateWrapper<TradeOrder> wrapper = new LambdaUpdateWrapper<>();
+        wrapper.eq(TradeOrder::getId, id);
+        wrapper.eq(TradeOrder::getStatus, fromStatus);
+        wrapper.set(TradeOrder::getStatus, toStatus);
+        wrapper.set(cancelReason != null, TradeOrder::getCancelReason, cancelReason);
+        wrapper.set(cancelTime != null, TradeOrder::getCancelTime, cancelTime);
+        wrapper.set(closeTime != null, TradeOrder::getCloseTime, closeTime);
+        return mapper.update(null, wrapper);
     }
 
     public PageDTO<TradeOrderDTO> selectPageByUser(Long userId, Integer pageNum, Integer pageSize, Integer status) {

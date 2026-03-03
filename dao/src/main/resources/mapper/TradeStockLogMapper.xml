@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.followba.store.dao.mapper.TradeStockLogMapper">
+  <resultMap id="BaseResultMap" type="com.followba.store.dao.po.TradeStockLog">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="biz_type" jdbcType="INTEGER" property="bizType" />
+    <result column="biz_no" jdbcType="VARCHAR" property="bizNo" />
+    <result column="order_id" jdbcType="BIGINT" property="orderId" />
+    <result column="sku_id" jdbcType="BIGINT" property="skuId" />
+    <result column="change_qty" jdbcType="INTEGER" property="changeQty" />
+    <result column="change_reason" jdbcType="VARCHAR" property="changeReason" />
+    <result column="creator" jdbcType="VARCHAR" property="creator" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="updater" jdbcType="VARCHAR" property="updater" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="deleted" jdbcType="TINYINT" property="deleted" />
+    <result column="tenant_id" jdbcType="BIGINT" property="tenantId" />
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, biz_type, biz_no, order_id, sku_id, change_qty, change_reason,
+    creator, create_time, updater, update_time, deleted, tenant_id
+  </sql>
+
+  <insert id="batchInsert">
+    insert into trade_stock_log
+    (biz_type, biz_no, order_id, sku_id, change_qty, change_reason)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.bizType}, #{item.bizNo}, #{item.orderId}, #{item.skuId}, #{item.changeQty}, #{item.changeReason})
+    </foreach>
+  </insert>
+</mapper>

@@ -43,4 +43,36 @@
     </foreach>
   </insert>
 
+  <update id="batchReduceStock">
+    update product_sku
+    set stock = case id
+      <foreach collection="list" item="item">
+        when #{item.skuId} then stock - #{item.quantity}
+      </foreach>
+    end
+    where deleted = 0
+      and id in
+      <foreach collection="list" item="item" open="(" separator="," close=")">
+        #{item.skuId}
+      </foreach>
+      and
+      <foreach collection="list" item="item" open="(" separator=" or " close=")">
+        (id = #{item.skuId} and stock &gt;= #{item.quantity})
+      </foreach>
+  </update>
+
+  <update id="batchIncreaseStock">
+    update product_sku
+    set stock = case id
+      <foreach collection="list" item="item">
+        when #{item.skuId} then stock + #{item.quantity}
+      </foreach>
+    end
+    where deleted = 0
+      and id in
+      <foreach collection="list" item="item" open="(" separator="," close=")">
+        #{item.skuId}
+      </foreach>
+  </update>
+
 </mapper>
