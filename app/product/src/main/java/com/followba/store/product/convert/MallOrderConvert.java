@@ -1,6 +1,7 @@
 package com.followba.store.product.convert;
 
 import com.followba.store.product.dto.OrderCancelDTO;
+import com.followba.store.product.dto.OrderCloseDTO;
 import com.followba.store.product.dto.OrderCreateDTO;
 import com.followba.store.product.dto.OrderCreateResultDTO;
 import com.followba.store.product.dto.OrderDetailDTO;
@@ -11,6 +12,7 @@ import com.followba.store.product.dto.OrderPaySuccessDTO;
 import com.followba.store.product.dto.OrderSimpleItemDTO;
 import com.followba.store.product.dto.OrderStatusDTO;
 import com.followba.store.product.vo.in.OrderCancelIn;
+import com.followba.store.product.vo.in.OrderCloseIn;
 import com.followba.store.product.vo.in.OrderCreateIn;
 import com.followba.store.product.vo.in.OrderPageIn;
 import com.followba.store.product.vo.in.OrderPaySuccessIn;
@@ -35,6 +37,8 @@ public interface MallOrderConvert {
     OrderPageQueryDTO toOrderPageQueryDTO(OrderPageIn in);
 
     OrderCancelDTO toOrderCancelDTO(OrderCancelIn in);
+
+    OrderCloseDTO toOrderCloseDTO(OrderCloseIn in);
 
     OrderPaySuccessDTO toOrderPaySuccessDTO(OrderPaySuccessIn in);
 

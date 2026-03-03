@@ -71,7 +71,10 @@ public enum ProductConstants implements ErrorCode {
     ORDER_CANCEL_STATUS_INVALID(61805, "当前订单状态不支持取消"),
     ORDER_PAY_STATUS_INVALID(61806, "当前订单状态不支持支付回写"),
     ORDER_CHECKOUT_ITEM_EMPTY(61807, "结算单明细为空"),
-    ORDER_CHECKOUT_USER_MISMATCH(61808, "结算单不属于当前用户");
+    ORDER_CHECKOUT_USER_MISMATCH(61808, "结算单不属于当前用户"),
+    ORDER_STOCK_NOT_ENOUGH(61809, "库存不足，无法创建订单"),
+    ORDER_STOCK_RESTORE_FAILED(61810, "库存回补失败"),
+    ORDER_CLOSE_STATUS_INVALID(61811, "当前订单状态不支持关闭");
 
     private final int code;
     private final String msg;
@@ -136,4 +139,10 @@ public enum ProductConstants implements ErrorCode {
     public static final String CHECKOUT_ORDER_NO_PREFIX = "CK";
 
     public static final String ORDER_NO_PREFIX = "OD";
+
+    public static final String ORDER_STOCK_DEDUCT_REASON = "order_create_deduct";
+
+    public static final String ORDER_STOCK_CANCEL_RESTORE_REASON = "order_cancel_restore";
+
+    public static final String ORDER_STOCK_CLOSE_RESTORE_REASON = "order_close_restore";
 }

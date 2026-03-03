@@ -2,6 +2,7 @@ package com.followba.store.product.service;
 
 import com.followba.store.common.resp.PageResp;
 import com.followba.store.product.dto.OrderCancelDTO;
+import com.followba.store.product.dto.OrderCloseDTO;
 import com.followba.store.product.dto.OrderCreateDTO;
 import com.followba.store.product.dto.OrderCreateResultDTO;
 import com.followba.store.product.dto.OrderDetailDTO;
@@ -21,6 +22,8 @@ public interface MallOrderService {
     OrderStatusDTO status(Long id);
 
     void cancel(OrderCancelDTO dto);
+
+    void close(OrderCloseDTO dto);
 
     void paySuccess(OrderPaySuccessDTO dto);
 }

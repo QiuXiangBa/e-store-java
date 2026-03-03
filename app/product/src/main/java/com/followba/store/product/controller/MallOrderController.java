@@ -10,6 +10,7 @@ import com.followba.store.product.dto.OrderPageQueryDTO;
 import com.followba.store.product.dto.OrderStatusDTO;
 import com.followba.store.product.service.MallOrderService;
 import com.followba.store.product.vo.in.OrderCancelIn;
+import com.followba.store.product.vo.in.OrderCloseIn;
 import com.followba.store.product.vo.in.OrderCreateIn;
 import com.followba.store.product.vo.in.OrderPageIn;
 import com.followba.store.product.vo.in.OrderPaySuccessIn;
@@ -64,6 +65,12 @@ public class MallOrderController {
     @PostMapping("/cancel")
     public Out<CommonBooleanOut> cancel(@Valid @RequestBody OrderCancelIn in) {
         mallOrderService.cancel(MallOrderConvert.INSTANCE.toOrderCancelDTO(in));
+        return Out.success(CommonBooleanOut.ok());
+    }
+
+    @PostMapping("/close")
+    public Out<CommonBooleanOut> close(@Valid @RequestBody OrderCloseIn in) {
+        mallOrderService.close(MallOrderConvert.INSTANCE.toOrderCloseDTO(in));
         return Out.success(CommonBooleanOut.ok());
     }
 

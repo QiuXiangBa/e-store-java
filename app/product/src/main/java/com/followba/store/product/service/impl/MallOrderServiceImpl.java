@@ -8,18 +8,23 @@ import com.followba.store.dao.biz.BizTradeCheckoutOrderMapper;
 import com.followba.store.dao.biz.BizTradeOrderItemMapper;
 import com.followba.store.dao.biz.BizTradeOrderMapper;
 import com.followba.store.dao.biz.BizTradeOrderOperateLogMapper;
+import com.followba.store.dao.biz.BizTradeStockLogMapper;
+import com.followba.store.dao.biz.BizProductSkuMapper;
 import com.followba.store.dao.constant.ProductConstants;
 import com.followba.store.dao.dto.PageDTO;
+import com.followba.store.dao.dto.ProductSkuStockChangeDTO;
 import com.followba.store.dao.dto.TradeCheckoutItemDTO;
 import com.followba.store.dao.dto.TradeCheckoutOrderDTO;
 import com.followba.store.dao.dto.TradeOrderDTO;
 import com.followba.store.dao.dto.TradeOrderItemDTO;
 import com.followba.store.dao.dto.TradeOrderOperateLogDTO;
+import com.followba.store.dao.dto.TradeStockLogDTO;
 import com.followba.store.dao.enums.TradeCheckoutOrderStatusEnum;
 import com.followba.store.dao.enums.TradeOrderOperateTypeEnum;
 import com.followba.store.dao.enums.TradeOrderOperatorTypeEnum;
 import com.followba.store.dao.enums.TradeOrderStatusEnum;
 import com.followba.store.product.dto.OrderCancelDTO;
+import com.followba.store.product.dto.OrderCloseDTO;
 import com.followba.store.product.dto.OrderCreateDTO;
 import com.followba.store.product.dto.OrderCreateResultDTO;
 import com.followba.store.product.dto.OrderDetailDTO;
@@ -30,6 +35,7 @@ import com.followba.store.product.dto.OrderPaySuccessDTO;
 import com.followba.store.product.dto.OrderSimpleItemDTO;
 import com.followba.store.product.dto.OrderStatusDTO;
 import com.followba.store.product.service.MallOrderService;
+import com.followba.store.dao.enums.TradeStockBizTypeEnum;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,6 +66,12 @@ public class MallOrderServiceImpl implements MallOrderService {
 
     @Resource
     private BizTradeOrderOperateLogMapper bizTradeOrderOperateLogMapper;
+
+    @Resource
+    private BizProductSkuMapper bizProductSkuMapper;
+
+    @Resource
+    private BizTradeStockLogMapper bizTradeStockLogMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -101,10 +113,17 @@ public class MallOrderServiceImpl implements MallOrderService {
         orderDTO.setRemark(dto.getRemark());
         bizTradeOrderMapper.insert(orderDTO);
 
+        List<ProductSkuStockChangeDTO> deductChangeList = buildSkuChangeDTOList(checkoutItems);
+        applyStockDeduct(deductChangeList);
+
         List<TradeOrderItemDTO> orderItems = checkoutItems.stream()
                 .map(item -> toTradeOrderItemDTO(item, orderDTO.getId(), userId))
                 .toList();
         bizTradeOrderItemMapper.insertBatch(orderItems);
+        writeStockLogBatch(orderDTO.getId(), orderDTO.getOrderNo(), deductChangeList,
+                TradeStockBizTypeEnum.ORDER_CREATE_DEDUCT,
+                ProductConstants.ORDER_STOCK_DEDUCT_REASON,
+                false);
 
         writeOperateLog(orderDTO.getId(), null, orderDTO.getStatus(), TradeOrderOperateTypeEnum.CREATE,
                 TradeOrderOperatorTypeEnum.USER, userId, "create by checkout");
@@ -198,15 +217,47 @@ public class MallOrderServiceImpl implements MallOrderService {
             throw new BizException(ProductConstants.ORDER_CANCEL_STATUS_INVALID);
         }
 
-        TradeOrderDTO updateDTO = new TradeOrderDTO();
-        updateDTO.setId(orderDTO.getId());
-        updateDTO.setStatus(TradeOrderStatusEnum.CANCELLED.getCode());
-        updateDTO.setCancelReason(dto.getReason());
-        updateDTO.setCancelTime(new Date());
-        bizTradeOrderMapper.updateById(updateDTO);
+        int updateRows = bizTradeOrderMapper.updateStatusByIdAndFromStatus(
+                orderDTO.getId(),
+                TradeOrderStatusEnum.CREATED.getCode(),
+                TradeOrderStatusEnum.CANCELLED.getCode(),
+                dto.getReason(),
+                new Date(),
+                null
+        );
+        if (updateRows != ProductConstants.DEFAULT_ONE) {
+            throw new BizException(ProductConstants.ORDER_CANCEL_STATUS_INVALID);
+        }
+        restoreStockForOrder(orderDTO, TradeStockBizTypeEnum.ORDER_CANCEL_RESTORE,
+                ProductConstants.ORDER_STOCK_CANCEL_RESTORE_REASON);
 
         writeOperateLog(orderDTO.getId(), orderDTO.getStatus(), TradeOrderStatusEnum.CANCELLED.getCode(),
                 TradeOrderOperateTypeEnum.CANCEL, TradeOrderOperatorTypeEnum.USER, userId, dto.getReason());
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void close(OrderCloseDTO dto) {
+        Long userId = getCurrentUserId();
+        TradeOrderDTO orderDTO = validateUserOrder(dto.getOrderId(), userId);
+        if (!TradeOrderStatusEnum.CREATED.getCode().equals(orderDTO.getStatus())) {
+            throw new BizException(ProductConstants.ORDER_CLOSE_STATUS_INVALID);
+        }
+        int updateRows = bizTradeOrderMapper.updateStatusByIdAndFromStatus(
+                orderDTO.getId(),
+                TradeOrderStatusEnum.CREATED.getCode(),
+                TradeOrderStatusEnum.CLOSED.getCode(),
+                null,
+                null,
+                new Date()
+        );
+        if (updateRows != ProductConstants.DEFAULT_ONE) {
+            throw new BizException(ProductConstants.ORDER_CLOSE_STATUS_INVALID);
+        }
+        restoreStockForOrder(orderDTO, TradeStockBizTypeEnum.ORDER_CLOSE_RESTORE,
+                ProductConstants.ORDER_STOCK_CLOSE_RESTORE_REASON);
+        writeOperateLog(orderDTO.getId(), orderDTO.getStatus(), TradeOrderStatusEnum.CLOSED.getCode(),
+                TradeOrderOperateTypeEnum.AUTO_CLOSE, TradeOrderOperatorTypeEnum.USER, userId, dto.getReason());
     }
 
     @Override
@@ -327,6 +378,96 @@ public class MallOrderServiceImpl implements MallOrderService {
         if (requestId == null || requestId.isBlank()) {
             throw new BizException(ProductConstants.ORDER_REQUEST_ID_REQUIRED);
         }
+    }
+
+    private List<ProductSkuStockChangeDTO> buildSkuChangeDTOList(List<TradeCheckoutItemDTO> itemDTOList) {
+        return itemDTOList.stream()
+                .collect(Collectors.groupingBy(TradeCheckoutItemDTO::getSkuId,
+                        Collectors.summingInt(TradeCheckoutItemDTO::getQuantity)))
+                .entrySet()
+                .stream()
+                .map(entry -> {
+                    ProductSkuStockChangeDTO changeDTO = new ProductSkuStockChangeDTO();
+                    changeDTO.setSkuId(entry.getKey());
+                    changeDTO.setQuantity(entry.getValue());
+                    return changeDTO;
+                })
+                .toList();
+    }
+
+    private void applyStockDeduct(List<ProductSkuStockChangeDTO> changeDTOList) {
+        // 批量原子扣减库存，任一 SKU 不满足条件即整单失败 / Batch atomic stock deduction, fail whole order when any SKU cannot be deducted.
+        int affectedRows = bizProductSkuMapper.batchReduceStock(changeDTOList);
+        if (affectedRows != changeDTOList.size()) {
+            throw new BizException(ProductConstants.ORDER_STOCK_NOT_ENOUGH);
+        }
+    }
+
+    private void applyStockRestore(List<ProductSkuStockChangeDTO> changeDTOList) {
+        int affectedRows = bizProductSkuMapper.batchIncreaseStock(changeDTOList);
+        if (affectedRows != changeDTOList.size()) {
+            throw new BizException(ProductConstants.ORDER_STOCK_RESTORE_FAILED);
+        }
+    }
+
+    private void restoreStockForOrder(TradeOrderDTO orderDTO,
+                                      TradeStockBizTypeEnum bizTypeEnum,
+                                      String reason) {
+        // 通过库存日志防重复回补 / Prevent duplicate stock restoration via stock log.
+        List<TradeOrderItemDTO> orderItemDTOList = bizTradeOrderItemMapper.selectListByOrderId(orderDTO.getId());
+        List<ProductSkuStockChangeDTO> allChangeDTOList = buildSkuChangeDTOListFromOrderItems(orderItemDTOList);
+        Set<Long> skuIds = allChangeDTOList.stream().map(ProductSkuStockChangeDTO::getSkuId).collect(Collectors.toSet());
+        Set<Long> existsSkuIds = bizTradeStockLogMapper.selectListByBizAndSkuIds(
+                        bizTypeEnum.getCode(),
+                        orderDTO.getOrderNo(),
+                        skuIds
+                ).stream()
+                .map(TradeStockLogDTO::getSkuId)
+                .collect(Collectors.toSet());
+        List<ProductSkuStockChangeDTO> restoreDTOList = allChangeDTOList.stream()
+                .filter(item -> !existsSkuIds.contains(item.getSkuId()))
+                .toList();
+        if (restoreDTOList.isEmpty()) {
+            return;
+        }
+        writeStockLogBatch(orderDTO.getId(), orderDTO.getOrderNo(), restoreDTOList, bizTypeEnum, reason, true);
+        applyStockRestore(restoreDTOList);
+    }
+
+    private List<ProductSkuStockChangeDTO> buildSkuChangeDTOListFromOrderItems(List<TradeOrderItemDTO> itemDTOList) {
+        return itemDTOList.stream()
+                .collect(Collectors.groupingBy(TradeOrderItemDTO::getSkuId,
+                        Collectors.summingInt(TradeOrderItemDTO::getQuantity)))
+                .entrySet()
+                .stream()
+                .map(entry -> {
+                    ProductSkuStockChangeDTO changeDTO = new ProductSkuStockChangeDTO();
+                    changeDTO.setSkuId(entry.getKey());
+                    changeDTO.setQuantity(entry.getValue());
+                    return changeDTO;
+                })
+                .toList();
+    }
+
+    private void writeStockLogBatch(Long orderId,
+                                    String orderNo,
+                                    List<ProductSkuStockChangeDTO> changeDTOList,
+                                    TradeStockBizTypeEnum bizTypeEnum,
+                                    String reason,
+                                    boolean increaseStock) {
+        List<TradeStockLogDTO> stockLogDTOList = changeDTOList.stream()
+                .map(item -> {
+                    TradeStockLogDTO stockLogDTO = new TradeStockLogDTO();
+                    stockLogDTO.setBizType(bizTypeEnum.getCode());
+                    stockLogDTO.setBizNo(orderNo);
+                    stockLogDTO.setOrderId(orderId);
+                    stockLogDTO.setSkuId(item.getSkuId());
+                    stockLogDTO.setChangeQty(increaseStock ? item.getQuantity() : -item.getQuantity());
+                    stockLogDTO.setChangeReason(reason);
+                    return stockLogDTO;
+                })
+                .toList();
+        bizTradeStockLogMapper.insertBatch(stockLogDTOList);
     }
 
     private String buildOrderNo(Long userId) {

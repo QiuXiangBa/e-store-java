@@ -3,6 +3,7 @@ package com.followba.store.dao.biz;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.followba.store.dao.convert.ProductSkuConvert;
 import com.followba.store.dao.dto.ProductSkuDTO;
+import com.followba.store.dao.dto.ProductSkuStockChangeDTO;
 import com.followba.store.dao.mapper.ProductSkuMapper;
 import com.followba.store.dao.po.ProductSku;
 import jakarta.annotation.Resource;
@@ -75,5 +76,19 @@ public class BizProductSkuMapper {
             return;
         }
         mapper.deleteBatchIds(ids);
+    }
+
+    public int batchReduceStock(List<ProductSkuStockChangeDTO> changeDTOList) {
+        if (changeDTOList == null || changeDTOList.isEmpty()) {
+            return 0;
+        }
+        return mapper.batchReduceStock(changeDTOList);
+    }
+
+    public int batchIncreaseStock(List<ProductSkuStockChangeDTO> changeDTOList) {
+        if (changeDTOList == null || changeDTOList.isEmpty()) {
+            return 0;
+        }
+        return mapper.batchIncreaseStock(changeDTOList);
     }
 }
