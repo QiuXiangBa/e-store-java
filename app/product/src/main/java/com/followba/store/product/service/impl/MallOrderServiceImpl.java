@@ -34,6 +34,7 @@ import com.followba.store.product.dto.OrderPageQueryDTO;
 import com.followba.store.product.dto.OrderPaySuccessDTO;
 import com.followba.store.product.dto.OrderSimpleItemDTO;
 import com.followba.store.product.dto.OrderStatusDTO;
+import com.followba.store.product.service.MallFulfillmentService;
 import com.followba.store.product.service.MallOrderService;
 import com.followba.store.dao.enums.TradeStockBizTypeEnum;
 import jakarta.annotation.Resource;
@@ -72,6 +73,9 @@ public class MallOrderServiceImpl implements MallOrderService {
 
     @Resource
     private BizTradeStockLogMapper bizTradeStockLogMapper;
+
+    @Resource
+    private MallFulfillmentService mallFulfillmentService;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -230,6 +234,7 @@ public class MallOrderServiceImpl implements MallOrderService {
         }
         restoreStockForOrder(orderDTO, TradeStockBizTypeEnum.ORDER_CANCEL_RESTORE,
                 ProductConstants.ORDER_STOCK_CANCEL_RESTORE_REASON);
+        mallFulfillmentService.closeForOrder(orderDTO);
 
         writeOperateLog(orderDTO.getId(), orderDTO.getStatus(), TradeOrderStatusEnum.CANCELLED.getCode(),
                 TradeOrderOperateTypeEnum.CANCEL, TradeOrderOperatorTypeEnum.USER, userId, dto.getReason());
@@ -256,6 +261,7 @@ public class MallOrderServiceImpl implements MallOrderService {
         }
         restoreStockForOrder(orderDTO, TradeStockBizTypeEnum.ORDER_CLOSE_RESTORE,
                 ProductConstants.ORDER_STOCK_CLOSE_RESTORE_REASON);
+        mallFulfillmentService.closeForOrder(orderDTO);
         writeOperateLog(orderDTO.getId(), orderDTO.getStatus(), TradeOrderStatusEnum.CLOSED.getCode(),
                 TradeOrderOperateTypeEnum.AUTO_CLOSE, TradeOrderOperatorTypeEnum.USER, userId, dto.getReason());
     }
@@ -279,6 +285,13 @@ public class MallOrderServiceImpl implements MallOrderService {
         updateDTO.setStatus(TradeOrderStatusEnum.PAID.getCode());
         updateDTO.setPaidTime(new Date());
         bizTradeOrderMapper.updateById(updateDTO);
+
+        TradeOrderDTO paidOrderDTO = new TradeOrderDTO();
+        paidOrderDTO.setId(orderDTO.getId());
+        paidOrderDTO.setOrderNo(orderDTO.getOrderNo());
+        paidOrderDTO.setUserId(orderDTO.getUserId());
+        paidOrderDTO.setStatus(TradeOrderStatusEnum.PAID.getCode());
+        mallFulfillmentService.createForPaidOrder(paidOrderDTO);
 
         writeOperateLog(orderDTO.getId(), orderDTO.getStatus(), TradeOrderStatusEnum.PAID.getCode(),
                 TradeOrderOperateTypeEnum.PAY_SUCCESS, TradeOrderOperatorTypeEnum.SYSTEM,

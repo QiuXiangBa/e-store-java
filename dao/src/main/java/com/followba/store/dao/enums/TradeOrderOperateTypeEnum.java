@@ -26,7 +26,12 @@ public enum TradeOrderOperateTypeEnum {
     /**
      * 系统关闭 / Auto close.
      */
-    AUTO_CLOSE(3);
+    AUTO_CLOSE(3),
+
+    /**
+     * 用户签收 / User receive.
+     */
+    RECEIVE(4);
 
     private final Integer code;
 
