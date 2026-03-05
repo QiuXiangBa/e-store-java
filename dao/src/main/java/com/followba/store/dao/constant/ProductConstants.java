@@ -74,7 +74,14 @@ public enum ProductConstants implements ErrorCode {
     ORDER_CHECKOUT_USER_MISMATCH(61808, "结算单不属于当前用户"),
     ORDER_STOCK_NOT_ENOUGH(61809, "库存不足，无法创建订单"),
     ORDER_STOCK_RESTORE_FAILED(61810, "库存回补失败"),
-    ORDER_CLOSE_STATUS_INVALID(61811, "当前订单状态不支持关闭");
+    ORDER_CLOSE_STATUS_INVALID(61811, "当前订单状态不支持关闭"),
+    ORDER_FULFILLMENT_NOT_EXISTS(61812, "履约单不存在"),
+    ORDER_FULFILLMENT_SHIP_STATUS_INVALID(61813, "当前履约状态不支持发货"),
+    ORDER_FULFILLMENT_RECEIVE_STATUS_INVALID(61814, "当前履约状态不支持签收"),
+    ORDER_FULFILLMENT_ORDER_STATUS_INVALID(61815, "当前订单状态不支持履约操作"),
+    ORDER_FULFILLMENT_LOGISTICS_REQUIRED(61816, "物流信息不完整"),
+    ORDER_FULFILLMENT_LOGISTICS_STATUS_INVALID(61817, "物流状态不合法"),
+    ORDER_FULFILLMENT_LOGISTICS_NODE_REQUIRED(61818, "物流节点信息不能为空");
 
     private final int code;
     private final String msg;
@@ -145,4 +152,10 @@ public enum ProductConstants implements ErrorCode {
     public static final String ORDER_STOCK_CANCEL_RESTORE_REASON = "order_cancel_restore";
 
     public static final String ORDER_STOCK_CLOSE_RESTORE_REASON = "order_close_restore";
+
+    public static final String FULFILLMENT_INIT_NODE_DESC = "支付成功，待发货";
+
+    public static final String FULFILLMENT_SIGNED_NODE_DESC = "用户已签收";
+
+    public static final String FULFILLMENT_CLOSED_NODE_DESC = "订单已关闭，履约关闭";
 }

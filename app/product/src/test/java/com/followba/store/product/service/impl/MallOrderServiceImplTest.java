@@ -20,6 +20,8 @@ import com.followba.store.dao.enums.TradeStockBizTypeEnum;
 import com.followba.store.product.dto.OrderCancelDTO;
 import com.followba.store.product.dto.OrderCreateDTO;
 import com.followba.store.product.dto.OrderCreateResultDTO;
+import com.followba.store.product.dto.OrderPaySuccessDTO;
+import com.followba.store.product.service.MallFulfillmentService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -37,6 +39,7 @@ import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anySet;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -63,6 +66,9 @@ class MallOrderServiceImplTest {
 
     @Mock
     private BizTradeStockLogMapper bizTradeStockLogMapper;
+
+    @Mock
+    private MallFulfillmentService mallFulfillmentService;
 
     @InjectMocks
     private MallOrderServiceImpl mallOrderService;
@@ -149,6 +155,7 @@ class MallOrderServiceImplTest {
         when(bizTradeStockLogMapper.selectListByBizAndSkuIds(eq(TradeStockBizTypeEnum.ORDER_CANCEL_RESTORE.getCode()), eq("OD123"), anySet()))
                 .thenReturn(List.of());
         when(bizProductSkuMapper.batchIncreaseStock(anyList())).thenReturn(1);
+        doNothing().when(mallFulfillmentService).closeForOrder(any(TradeOrderDTO.class));
 
         mallOrderService.cancel(dto);
 
@@ -164,6 +171,26 @@ class MallOrderServiceImplTest {
         Assertions.assertEquals(1, stockLogs.size());
         Assertions.assertEquals(TradeStockBizTypeEnum.ORDER_CANCEL_RESTORE.getCode(), stockLogs.get(0).getBizType());
         Assertions.assertEquals(3, stockLogs.get(0).getChangeQty());
+    }
+
+    @Test
+    void paySuccess_shouldCreateFulfillmentForPaidOrder() {
+        OrderPaySuccessDTO dto = new OrderPaySuccessDTO();
+        dto.setOrderNo("OD-PAY-001");
+        dto.setPayTxnNo("PAY-TXN-001");
+
+        TradeOrderDTO orderDTO = new TradeOrderDTO();
+        orderDTO.setId(1001L);
+        orderDTO.setOrderNo("OD-PAY-001");
+        orderDTO.setUserId(99L);
+        orderDTO.setStatus(TradeOrderStatusEnum.CREATED.getCode());
+
+        when(bizTradeOrderMapper.selectByOrderNo("OD-PAY-001")).thenReturn(orderDTO);
+        doNothing().when(mallFulfillmentService).createForPaidOrder(any(TradeOrderDTO.class));
+
+        mallOrderService.paySuccess(dto);
+
+        verify(mallFulfillmentService).createForPaidOrder(any(TradeOrderDTO.class));
     }
 
     private void bindUser(Long userId) {
